@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TACTOPS // Benjamin Safi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0c08;
+    color: #8fbc3a;
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .scanline {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 3px);
+    pointer-events: none; z-index: 9999;
+  }
+
+  .grid-bg {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-image: linear-gradient(rgba(143,188,58,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(143,188,58,0.04) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+    transition: background-image 0.3s;
+  }
+
+  body.red-alert .grid-bg {
+    background-image: linear-gradient(rgba(255,40,40,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,40,40,0.06) 1px, transparent 1px);
+  }
+
+  /* BOOT SCREEN */
+  #bootScreen {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: #000; z-index: 8000;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    padding: 40px 60px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .boot-header {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px; font-weight: 900;
+    color: #c8e86a; letter-spacing: 8px; margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(200,232,106,0.6);
+  }
+  .boot-header span { color: #ff4444; }
+  .boot-sub { font-size: 11px; letter-spacing: 4px; color: #3d5518; margin-bottom: 40px; }
+
+  #bootLines { width: 100%; max-width: 700px; }
+
+  .boot-line { font-size: 12px; line-height: 2; opacity: 0; transition: opacity 0.1s; }
+  .boot-line .tag { margin-right: 12px; }
+  .boot-line .msg { color: #5a7520; }
+  .boot-line.ok .tag { color: #8fbc3a; }
+  .boot-line.ok .msg { color: #6a8a30; }
+  .boot-line.err .tag { color: #ff4444; }
+  .boot-line.err .msg { color: #cc4444; }
+  .boot-line.warn .tag { color: #ffaa33; }
+  .boot-line.warn .msg { color: #cc8822; }
+
+  .boot-progress-wrap { margin-top: 24px; width: 100%; max-width: 700px; }
+  .boot-progress-label { display: flex; justify-content: space-between; font-size: 10px; color: #3d5518; letter-spacing: 2px; margin-bottom: 6px; }
+  .boot-progress-track { height: 2px; background: #1a2410; width: 100%; }
+  .boot-progress-fill { height: 100%; background: #8fbc3a; width: 0%; transition: width 0.2s ease; box-shadow: 0 0 8px rgba(143,188,58,0.6); }
+
+  /* RED ALERT OVERLAY */
+  #redOverlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,0,0,0); pointer-events: none; z-index: 7000;
+  }
+  body.red-alert #redOverlay { animation: redPulse 1.2s infinite; }
+  @keyframes redPulse { 0%,100%{background:rgba(255,0,0,0)} 50%{background:rgba(255,0,0,0.07)} }
+
+  /* MAIN UI */
+  .main {
+    position: relative; z-index: 1;
+    padding: 16px; max-width: 1100px; margin: 0 auto;
+    opacity: 0; transition: opacity 0.8s;
+  }
+  .main.visible { opacity: 1; }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    border: 1px solid #3a4d1a; border-left: 4px solid #8fbc3a;
+    padding: 10px 16px; margin-bottom: 16px;
+    background: rgba(143,188,58,0.04);
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  body.red-alert .topbar { border-left-color: #ff2222; border-color: #4d1a1a; background: rgba(255,30,30,0.06); }
+
+  .topbar-left { display: flex; align-items: center; gap: 20px; }
+
+  .logo {
+    font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900;
+    color: #c8e86a; letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(200,232,106,0.4);
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .logo span { color: #ff4444; }
+  body.red-alert .logo { color: #ff8888; text-shadow: 0 0 20px rgba(255,80,80,0.6); }
+
+  .operator-block { border-left: 1px solid #2a3d12; padding-left: 20px; }
+  .operator-label { font-size: 8px; letter-spacing: 3px; color: #3d5518; text-transform: uppercase; }
+  .operator-name { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; color: #c8e86a; letter-spacing: 2px; transition: color 0.3s; }
+  body.red-alert .operator-name { color: #ff9999; }
+  .operator-role { font-size: 9px; color: #5a7520; letter-spacing: 2px; }
+
+  .topbar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #8fbc3a;
+    animation: pulse 1.5s infinite; display: inline-block; margin-right: 6px; transition: background 0.3s;
+  }
+  body.red-alert .status-dot { background: #ff2222; animation: pulse-red 0.6s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 6px #8fbc3a} 50%{opacity:0.4;box-shadow:none} }
+  @keyframes pulse-red { 0%,100%{opacity:1;box-shadow:0 0 10px #ff2222} 50%{opacity:0.3;box-shadow:none} }
+
+  .status-label { font-size: 11px; color: #8fbc3a; letter-spacing: 2px; transition: color 0.3s; }
+  body.red-alert .status-label { color: #ff4444; }
+  .timestamp { font-size: 11px; color: #5a7520; letter-spacing: 1px; }
+
+  /* SIREN BAR */
+  #sirenBar {
+    display: none; text-align: center;
+    font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 900;
+    letter-spacing: 6px; color: #ff2222; padding: 10px;
+    border: 1px solid #ff2222; margin-bottom: 16px;
+    animation: sirenAnim 0.6s infinite; background: rgba(255,0,0,0.06);
+  }
+  body.red-alert #sirenBar { display: block; }
+  @keyframes sirenAnim { 0%,100%{color:#ff2222;border-color:#ff2222;background:rgba(255,0,0,0.06)} 50%{color:#ff8888;border-color:#ff6666;background:rgba(255,0,0,0.12)} }
+
+  /* ALERT BANNER */
+  .alert-banner {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,68,68,0.08); border: 1px solid rgba(255,68,68,0.3); border-left: 4px solid #ff4444;
+    padding: 8px 16px; margin-bottom: 16px;
+    font-size: 12px; letter-spacing: 2px; color: #ff8888; transition: all 0.3s;
+  }
+  body.red-alert .alert-banner { background: rgba(255,20,20,0.18); border-color: #ff2222; border-left-color: #ff0000; color: #ffaaaa; animation: alertBlink 0.8s infinite; }
+  @keyframes alertBlink { 0%,100%{opacity:1} 50%{opacity:0.7} }
+  .alert-icon { color: #ff4444; font-size: 14px; animation: blink 1s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .red-btn {
+    margin-left: auto; font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; padding: 6px 16px;
+    background: transparent; border: 1px solid #ff4444; color: #ff4444;
+    cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+  }
+  .red-btn:hover { background: rgba(255,68,68,0.15); }
+  body.red-alert .red-btn { background: rgba(255,0,0,0.2); color: #ffaaaa; border-color: #ff0000; }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+
+  .stat-card {
+    border: 1px solid #2a3d12; border-top: 2px solid #8fbc3a;
+    padding: 14px; background: rgba(143,188,58,0.03);
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    transition: all 0.3s;
+  }
+  body.red-alert .stat-card { border-color: #3d1a1a; background: rgba(255,30,30,0.04); border-top-color: #882222; }
+  body.red-alert .stat-card.danger { border-top-color: #ff0000; }
+  body.red-alert .stat-card.warn { border-top-color: #ff6600; }
+  body.red-alert .stat-card.info { border-top-color: #cc0044; }
+
+  .stat-label { font-size: 9px; letter-spacing: 3px; color: #5a7520; margin-bottom: 8px; text-transform: uppercase; }
+  .stat-value { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 700; color: #c8e86a; line-height: 1; transition: color 0.3s; }
+  .stat-card.danger .stat-value { color: #ff6666; }
+  .stat-card.danger { border-top-color: #ff4444; }
+  .stat-card.warn .stat-value { color: #ffaa33; }
+  .stat-card.warn { border-top-color: #ff9900; }
+  .stat-card.info .stat-value { color: #66ccff; }
+  .stat-card.info { border-top-color: #0099cc; }
+  body.red-alert .stat-value { color: #ff9999 !important; }
+  .stat-delta { font-size: 10px; color: #5a7520; margin-top: 4px; }
+
+  /* CONTENT GRID */
+  .content-grid { display: grid; grid-template-columns: 1fr 1fr 320px; gap: 12px; margin-bottom: 16px; }
+
+  .panel { border: 1px solid #2a3d12; background: rgba(0,0,0,0.4); overflow: hidden; transition: border-color 0.3s, background 0.3s; }
+  body.red-alert .panel { border-color: #3d1010; background: rgba(20,0,0,0.5); }
+
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; border-bottom: 1px solid #2a3d12;
+    background: rgba(143,188,58,0.05); transition: all 0.3s;
+  }
+  body.red-alert .panel-header { background: rgba(255,20,20,0.06); border-bottom-color: #3d1010; }
+
+  .panel-title { font-size: 10px; letter-spacing: 3px; color: #8fbc3a; text-transform: uppercase; transition: color 0.3s; }
+  body.red-alert .panel-title { color: #ff6666; }
+
+  .panel-badge { font-size: 9px; padding: 2px 8px; border: 1px solid currentColor; letter-spacing: 1px; }
+  .badge-green { color: #8fbc3a; }
+  .badge-red { color: #ff4444; }
+  .badge-yellow { color: #ffaa33; }
+  .panel-body { padding: 14px; }
+
+  /* THREAT BARS */
+  .threat-item { margin-bottom: 12px; }
+  .threat-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: #8fbc3a; transition: color 0.3s; }
+  body.red-alert .threat-row { color: #ff8888; }
+  .threat-pct { color: #5a7520; }
+  .bar-track { height: 4px; background: #1a2410; position: relative; overflow: hidden; transition: background 0.3s; }
+  body.red-alert .bar-track { background: #2a1010; }
+  .bar-fill { height: 100%; position: absolute; left: 0; top: 0; transition: width 1s ease; }
+  .bar-fill.critical { background: #ff4444; box-shadow: 0 0 8px rgba(255,68,68,0.5); }
+  .bar-fill.high { background: #ff9900; }
+  .bar-fill.medium { background: #ffcc00; }
+  .bar-fill.low { background: #8fbc3a; }
+
+  /* MAP */
+  .map-panel { position: relative; padding: 14px; min-height: 220px; }
+  .fake-map { position: relative; width: 100%; height: 180px; border: 1px solid #2a3d12; overflow: hidden; transition: border-color 0.3s; }
+  body.red-alert .fake-map { border-color: #4d1010; }
+  .map-grid-lines {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background-image: linear-gradient(rgba(143,188,58,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(143,188,58,0.08) 1px, transparent 1px);
+    background-size: 20px 20px; transition: background-image 0.3s;
+  }
+  body.red-alert .map-grid-lines {
+    background-image: linear-gradient(rgba(255,40,40,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,40,40,0.1) 1px, transparent 1px);
+  }
+  .map-label { position: absolute; font-size: 9px; letter-spacing: 1px; color: #5a7520; }
+  .threat-node { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%, -50%); }
+  .threat-node::before {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); width: 8px; height: 8px;
+    border-radius: 50%; animation: ripple 2s infinite;
+  }
+  @keyframes ripple { 0%{width:8px;height:8px;opacity:1;box-shadow:0 0 0 0 currentColor} 100%{width:32px;height:32px;opacity:0;box-shadow:0 0 0 16px transparent} }
+  .node-red { background: #ff4444; color: #ff4444; }
+  .node-yellow { background: #ffaa33; color: #ffaa33; }
+  .node-green { background: #8fbc3a; color: #8fbc3a; }
+  .crosshair { position: absolute; width: 20px; height: 20px; border: 1px solid #ff4444; transform: translate(-50%, -50%); }
+  .crosshair::before, .crosshair::after { content: ''; position: absolute; background: #ff4444; }
+  .crosshair::before { width: 1px; height: 100%; top: 0; left: 50%; }
+  .crosshair::after { height: 1px; width: 100%; top: 50%; left: 0; }
+
+  /* LOG */
+  .log-feed { font-size: 10px; line-height: 1.8; max-height: 200px; overflow: hidden; }
+  .log-line { display: flex; gap: 8px; border-bottom: 1px solid rgba(143,188,58,0.05); padding: 3px 0; animation: fadeIn 0.3s ease; }
+  body.red-alert .log-line { border-bottom-color: rgba(255,40,40,0.08); }
+  @keyframes fadeIn { from{opacity:0;transform:translateX(-4px)} to{opacity:1;transform:none} }
+  .log-time { color: #3d5518; min-width: 50px; }
+  .log-type-crit { color: #ff4444; min-width: 40px; }
+  .log-type-warn { color: #ffaa33; min-width: 40px; }
+  .log-type-info { color: #8fbc3a; min-width: 40px; }
+  .log-msg { color: #6a8a30; flex: 1; }
+  body.red-alert .log-type-info { color: #ff6666; }
+  body.red-alert .log-msg { color: #884444; }
+
+  /* BOTTOM */
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fw-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; padding: 0 4px; }
+  .fw-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .fw-bar { width: 100%; background: #8fbc3a; min-height: 4px; transition: background 0.3s; }
+  .fw-bar.spike { background: #ff4444; }
+  body.red-alert .fw-bar { background: #882222; }
+  body.red-alert .fw-bar.spike { background: #ff0000; box-shadow: 0 0 8px #ff0000; }
+
+  .session-list { display: flex; flex-direction: column; gap: 6px; }
+  .session-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border: 1px solid #1a2410; font-size: 10px; transition: border-color 0.3s; }
+  body.red-alert .session-item { border-color: #2a1010; }
+  .session-ip { color: #c8e86a; font-family: 'Share Tech Mono'; flex: 1; transition: color 0.3s; }
+  body.red-alert .session-ip { color: #ff9999; }
+  .session-loc { color: #5a7520; font-size: 9px; }
+  .session-status { font-size: 9px; letter-spacing: 1px; }
+  .s-active { color: #8fbc3a; }
+  .s-suspicious { color: #ff4444; }
+  .s-blocked { color: #ff9900; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .bottom-row { grid-template-columns: 1fr; }
+    #bootScreen { padding: 30px 24px; }
+    .boot-header { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div class="grid-bg"></div>
+<div id="redOverlay"></div>
+
+<!-- BOOT SCREEN -->
+<div id="bootScreen">
+  <div class="boot-header">TACT<span>OPS</span></div>
+  <div class="boot-sub">TACTICAL CYBER OPERATIONS // RESTRICTED ACCESS</div>
+  <div id="bootLines"></div>
+  <div class="boot-progress-wrap">
+    <div class="boot-progress-label">
+      <span>SYSTEM INIT</span>
+      <span id="bootPct">0%</span>
+    </div>
+    <div class="boot-progress-track">
+      <div class="boot-progress-fill" id="bootFill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN UI -->
+<div class="main" id="mainUI">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo">TACT<span>OPS</span></div>
+      <div class="operator-block">
+        <div class="operator-label">Operator</div>
+        <div class="operator-name">BENJAMIN SAFI</div>
+        <div class="operator-role">IT SECURITY // CLEARANCE LVL 3</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div><span class="status-dot"></span><span class="status-label" id="sysStatus">SYS ONLINE</span></div>
+      <div class="timestamp" id="clock">--:--:-- // CLASSIFIED</div>
+    </div>
+  </div>
+
+  <div id="sirenBar">⚠ RED ALERT — CRITICAL BREACH DETECTED — BENJAMIN SAFI NOTIFIED ⚠</div>
+
+  <div class="alert-banner">
+    <span class="alert-icon">▲</span>
+    <span id="alertText">THREAT LEVEL : <strong>ELEVATED</strong></span>
+    <span style="color:#3d5518">|</span>
+    <span id="alertSub">14 ACTIVE INTRUSION ATTEMPTS DETECTED</span>
+    <span style="color:#3d5518">|</span>
+    <span style="color:#5a7520" id="alertStatus">PERIMETER FIREWALL: ENGAGED</span>
+    <button class="red-btn" id="redAlertBtn" onclick="toggleRedAlert()">⚡ RED ALERT</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card danger">
+      <div class="stat-label">Threats Detected</div>
+      <div class="stat-value" id="stat1">247</div>
+      <div class="stat-delta">▲ +18 in last hour</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="stat-label">Packets Blocked</div>
+      <div class="stat-value">14.3K</div>
+      <div class="stat-delta">▲ high traffic</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Systems Online</div>
+      <div class="stat-value">38/40</div>
+      <div class="stat-delta">▼ 2 in maintenance</div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-label">Uptime</div>
+      <div class="stat-value">99.7%</div>
+      <div class="stat-delta">■ nominal</div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Threat Analysis</span>
+        <span class="panel-badge badge-red">LIVE</span>
+      </div>
+      <div class="panel-body">
+        <div class="threat-item">
+          <div class="threat-row"><span>SQL Injection</span><span class="threat-pct">82%</span></div>
+          <div class="bar-track"><div class="bar-fill critical" style="width:82%"></div></div>
+        </div>
+        <div class="threat-item">
+          <div class="threat-row"><span>Brute Force</span><span class="threat-pct">67%</span></div>
+          <div class="bar-track"><div class="bar-fill high" style="width:67%"></div></div>
+        </div>
+        <div class="threat-item">
+          <div class="threat-row"><span>Port Scan</span><span class="threat-pct">55%</span></div>
+          <div class="bar-track"><div class="bar-fill medium" style="width:55%"></div></div>
+        </div>
+        <div class="threat-item">
+          <div class="threat-row"><span>DDoS Flood</span><span class="threat-pct">44%</span></div>
+          <div class="bar-track"><div class="bar-fill high" style="width:44%"></div></div>
+        </div>
+        <div class="threat-item">
+          <div class="threat-row"><span>Phishing Payload</span><span class="threat-pct">28%</span></div>
+          <div class="bar-track"><div class="bar-fill medium" style="width:28%"></div></div>
+        </div>
+        <div class="threat-item">
+          <div class="threat-row"><span>Zero-Day Attempt</span><span class="threat-pct">11%</span></div>
+          <div class="bar-track"><div class="bar-fill critical" style="width:11%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Origin Tracking</span>
+        <span class="panel-badge badge-yellow">4 TARGETS</span>
+      </div>
+      <div class="map-panel">
+        <div class="fake-map">
+          <div class="map-grid-lines"></div>
+          <span class="map-label" style="top:4px;left:4px">GRID 44N</span>
+          <span class="map-label" style="bottom:4px;right:4px">SECTOR 7</span>
+          <div class="threat-node node-red" style="top:35%;left:22%"></div>
+          <div class="crosshair" style="top:35%;left:22%"></div>
+          <div class="threat-node node-red" style="top:55%;left:68%"></div>
+          <div class="crosshair" style="top:55%;left:68%"></div>
+          <div class="threat-node node-yellow" style="top:25%;left:75%"></div>
+          <div class="threat-node node-green" style="top:70%;left:40%"></div>
+          <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.3" viewBox="0 0 300 180">
+            <line x1="66" y1="63" x2="204" y2="99" stroke="#ff4444" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="66" y1="63" x2="225" y2="45" stroke="#ff9900" stroke-width="0.5" stroke-dasharray="4,4"/>
+          </svg>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px;font-size:9px;letter-spacing:2px;">
+          <span><span style="color:#ff4444">■</span> CRITICAL</span>
+          <span><span style="color:#ffaa33">■</span> HIGH</span>
+          <span><span style="color:#8fbc3a">■</span> MONITOR</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Live Event Log</span>
+        <span class="panel-badge badge-green">STREAM</span>
+      </div>
+      <div class="panel-body">
+        <div class="log-feed" id="logFeed"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-row">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Firewall Traffic // 24H</span>
+        <span class="panel-badge badge-green">NOMINAL</span>
+      </div>
+      <div class="panel-body">
+        <div class="fw-bars" id="fwBars"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:8px;color:#3d5518;letter-spacing:1px;">
+          <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>NOW</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Active Sessions</span>
+        <span class="panel-badge badge-red">2 FLAGGED</span>
+      </div>
+      <div class="panel-body">
+        <div class="session-list">
+          <div class="session-item" style="background:rgba(143,188,58,0.06);border-color:#3a4d1a">
+            <div class="session-ip">B.SAFI // LOCAL</div>
+            <div class="session-loc">DE // HALLE</div>
+            <div class="session-status s-active">★ OPERATOR</div>
+          </div>
+          <div class="session-item">
+            <div class="session-ip">192.168.1.14</div>
+            <div class="session-loc">DE // BERLIN</div>
+            <div class="session-status s-active">■ AUTH</div>
+          </div>
+          <div class="session-item" style="background:rgba(255,68,68,0.04);border-color:rgba(255,68,68,0.2)">
+            <div class="session-ip">45.33.32.156</div>
+            <div class="session-loc">RU // UNKNOWN</div>
+            <div class="session-status s-suspicious">▲ SUSPECT</div>
+          </div>
+          <div class="session-item" style="background:rgba(255,153,0,0.04);border-color:rgba(255,153,0,0.2)">
+            <div class="session-ip">103.74.19.4</div>
+            <div class="session-loc">CN // SHANGHAI</div>
+            <div class="session-status s-blocked">✕ BLOCK</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // CLOCK
+  const clockEl = document.getElementById('clock');
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    clockEl.textContent = h+':'+m+':'+s+' // CLASSIFIED';
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // FIREWALL BARS
+  const heights = [20,30,25,40,35,50,45,60,55,70,65,80,75,85,90,78,88,95,72,60,85,100,90,70];
+  const spikes = [11,22];
+  const barsEl = document.getElementById('fwBars');
+  heights.forEach((h,i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'fw-bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'fw-bar'+(spikes.includes(i)?' spike':'');
+    bar.style.height = h+'px';
+    wrap.appendChild(bar);
+    barsEl.appendChild(wrap);
+  });
+
+  // LIVE LOG
+  const logEvents = [
+    ['CRIT','SQL injection attempt — 45.33.32.156'],
+    ['WARN','Port scan detected — 103.74.19.4'],
+    ['INFO','Session opened — B.SAFI authenticated'],
+    ['CRIT','Brute force: 238 attempts — 91.108.4.44'],
+    ['INFO','Patch applied — CVE-2024-3171'],
+    ['WARN','Unusual outbound — 10.0.0.88:4444'],
+    ['INFO','Backup integrity check passed'],
+    ['CRIT','Zero-day signature detected — sandbox'],
+    ['WARN','Geo-block triggered — CN/RU segment'],
+    ['INFO','Operator B.SAFI — rule updated'],
+    ['WARN','Auth failure x5 — vpn.gateway'],
+    ['CRIT','Payload quarantined — email filter'],
+    ['INFO','IDS rules synchronized'],
+    ['WARN','Traffic spike — +340% on port 443'],
+    ['INFO','SSL cert renewed — *.ops.internal'],
+  ];
+  const logFeed = document.getElementById('logFeed');
+  let logIdx = 0;
+  function addLog(forceCrit) {
+    const ev = forceCrit ? ['CRIT', forceCrit] : logEvents[logIdx % logEvents.length];
+    logIdx++;
+    const now = new Date();
+    const time = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    const tc = ev[0]==='CRIT'?'log-type-crit':ev[0]==='WARN'?'log-type-warn':'log-type-info';
+    line.innerHTML = '<span class="log-time">'+time+'</span><span class="'+tc+'">'+ev[0]+'</span><span class="log-msg">'+ev[1]+'</span>';
+    logFeed.insertBefore(line, logFeed.firstChild);
+    if (logFeed.children.length > 8) logFeed.removeChild(logFeed.lastChild);
+  }
+  for (let i=0;i<6;i++) addLog();
+  setInterval(addLog, 2800);
+
+  // STAT COUNTER
+  let base1 = 247;
+  setInterval(() => {
+    base1 += Math.floor(Math.random()*3);
+    document.getElementById('stat1').textContent = base1;
+  }, 4000);
+
+  // RED ALERT
+  let redActive = false;
+  function toggleRedAlert() {
+    redActive = !redActive;
+    document.body.classList.toggle('red-alert', redActive);
+    const btn = document.getElementById('redAlertBtn');
+    const alertText = document.getElementById('alertText');
+    const alertSub = document.getElementById('alertSub');
+    const alertStatus = document.getElementById('alertStatus');
+    const sysStatus = document.getElementById('sysStatus');
+    if (redActive) {
+      btn.textContent = '✕ STAND DOWN';
+      alertText.innerHTML = 'THREAT LEVEL : <strong>CRITICAL</strong>';
+      alertSub.textContent = 'BREACH CONFIRMED — ALL SYSTEMS COMPROMISED';
+      alertStatus.textContent = 'LOCKDOWN INITIATED';
+      sysStatus.textContent = 'BREACH DETECTED';
+      addLog('RED ALERT triggered by B.SAFI — lockdown active');
+      addLog('All non-essential sessions terminated');
+    } else {
+      btn.textContent = '⚡ RED ALERT';
+      alertText.innerHTML = 'THREAT LEVEL : <strong>ELEVATED</strong>';
+      alertSub.textContent = '14 ACTIVE INTRUSION ATTEMPTS DETECTED';
+      alertStatus.textContent = 'PERIMETER FIREWALL: ENGAGED';
+      sysStatus.textContent = 'SYS ONLINE';
+      addLog('Red alert cleared by B.SAFI — resuming normal ops');
+    }
+  }
+
+  // BOOT SEQUENCE
+  const bootLines = [
+    {t:'ok',  msg:'BIOS v4.2.1 — Tactical Systems Corp. — initialized'},
+    {t:'ok',  msg:'CPU cores: 16 // RAM: 64GB // integrity: verified'},
+    {t:'ok',  msg:'Loading kernel modules... done'},
+    {t:'warn',msg:'Non-standard network adapter detected — forcing compatibility'},
+    {t:'ok',  msg:'Mounting encrypted volumes... [AES-256] success'},
+    {t:'ok',  msg:'Starting firewall daemon... port rules loaded (1,247 rules)'},
+    {t:'ok',  msg:'IDS engine online — signature DB: 94,312 entries'},
+    {t:'warn',msg:'2 nodes offline — failover routing active'},
+    {t:'ok',  msg:'VPN tunnel established — 256-bit handshake confirmed'},
+    {t:'ok',  msg:'Authenticating operator... BENJAMIN SAFI // clearance LVL 3'},
+    {t:'ok',  msg:'Threat feed synced — 14 active alerts queued'},
+    {t:'err', msg:'Anomaly detected in sector 7 — flagging for review'},
+    {t:'ok',  msg:'Dashboard modules loaded — all systems nominal'},
+    {t:'ok',  msg:'TACTOPS ready. Welcome, Benjamin Safi.'},
+  ];
+
+  const bootLinesEl = document.getElementById('bootLines');
+  const bootFill = document.getElementById('bootFill');
+  const bootPct = document.getElementById('bootPct');
+  let lineIdx = 0;
+  const totalLines = bootLines.length;
+
+  function showNextLine() {
+    if (lineIdx >= totalLines) { setTimeout(endBoot, 600); return; }
+    const data = bootLines[lineIdx];
+    const div = document.createElement('div');
+    div.className = 'boot-line ' + data.t;
+    const tagMap = {ok:'[ OK ]', warn:'[WARN]', err:'[FAIL]'};
+    div.innerHTML = '<span class="tag">'+tagMap[data.t]+'</span><span class="msg">'+data.msg+'</span>';
+    bootLinesEl.appendChild(div);
+    requestAnimationFrame(() => { div.style.opacity = '1'; });
+    lineIdx++;
+    const pct = Math.round((lineIdx / totalLines) * 100);
+    bootFill.style.width = pct + '%';
+    bootPct.textContent = pct + '%';
+    const delay = 120 + Math.random()*180 + (data.t !== 'ok' ? 200 : 0);
+    setTimeout(showNextLine, delay);
+  }
+
+  function endBoot() {
+    const screen = document.getElementById('bootScreen');
+    screen.style.transition = 'opacity 0.8s';
+    screen.style.opacity = '0';
+    setTimeout(() => {
+      screen.style.display = 'none';
+      document.getElementById('mainUI').classList.add('visible');
+    }, 800);
+  }
+
+  setTimeout(showNextLine, 400);
+</script>
+</body>
+</html>
