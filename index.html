@@ -5,290 +5,181 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TACTOPS // Benjamin Safi</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#8fbc3a;font-family:'Share Tech Mono',monospace;min-height:100vh;overflow-x:hidden}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+.scanline{position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.04) 0px,rgba(0,0,0,0.04) 1px,transparent 1px,transparent 3px);pointer-events:none;z-index:9999}
 
-  body {
-    background: #0a0c08;
-    color: #8fbc3a;
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+.grid-bg{position:fixed;top:0;left:0;right:0;bottom:0;background-image:linear-gradient(rgba(143,188,58,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(143,188,58,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;transition:background-image 0.3s}
+body.red-alert .grid-bg{background-image:linear-gradient(rgba(255,30,30,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,30,30,0.06) 1px,transparent 1px)}
 
-  .scanline {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 3px);
-    pointer-events: none; z-index: 9999;
-  }
+#redOverlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,0,0,0);pointer-events:none;z-index:7000}
+body.red-alert #redOverlay{animation:redPulse 1s infinite}
+@keyframes redPulse{0%,100%{background:rgba(255,0,0,0)}50%{background:rgba(255,0,0,0.09)}}
 
-  .grid-bg {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background-image: linear-gradient(rgba(143,188,58,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(143,188,58,0.04) 1px, transparent 1px);
-    background-size: 40px 40px; pointer-events: none; z-index: 0;
-    transition: background-image 0.3s;
-  }
+/* ── BOOT ── */
+#bootScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:8000;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:40px 60px}
+.boot-header{font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;color:#c8e86a;letter-spacing:8px;margin-bottom:6px;text-shadow:0 0 30px rgba(200,232,106,0.6)}
+.boot-header span{color:#ff2200}
+.boot-sub{font-size:11px;letter-spacing:4px;color:#3d5518;margin-bottom:36px}
+#bootLines{width:100%;max-width:680px}
+.boot-line{font-size:12px;line-height:2;opacity:0;transition:opacity 0.1s}
+.boot-line .tag{margin-right:12px}
+.boot-line.ok .tag{color:#8fbc3a}.boot-line.ok .msg{color:#5a7a28}
+.boot-line.err .tag{color:#ff2200}.boot-line.err .msg{color:#bb2200}
+.boot-line.warn .tag{color:#ff9900}.boot-line.warn .msg{color:#bb7700}
+.boot-progress-wrap{margin-top:24px;width:100%;max-width:680px}
+.boot-progress-label{display:flex;justify-content:space-between;font-size:10px;color:#3d5518;letter-spacing:2px;margin-bottom:6px}
+.boot-progress-track{height:2px;background:#111;width:100%}
+.boot-progress-fill{height:100%;background:#8fbc3a;width:0%;transition:width 0.2s ease;box-shadow:0 0 10px rgba(143,188,58,0.8)}
 
-  body.red-alert .grid-bg {
-    background-image: linear-gradient(rgba(255,40,40,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,40,40,0.06) 1px, transparent 1px);
-  }
+/* ── MAIN ── */
+.main{position:relative;z-index:1;padding:14px;max-width:1300px;margin:0 auto;opacity:0;transition:opacity 0.8s}
+.main.visible{opacity:1}
 
-  /* BOOT SCREEN */
-  #bootScreen {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: #000; z-index: 8000;
-    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-    padding: 40px 60px;
-    font-family: 'Share Tech Mono', monospace;
-  }
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;border:1px solid #1a2a0a;border-left:4px solid #8fbc3a;padding:8px 14px;margin-bottom:14px;background:rgba(0,0,0,0.8);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);transition:all 0.3s}
+body.red-alert .topbar{border-left-color:#ff2200;border-color:#3d0a0a;background:rgba(20,0,0,0.9)}
+.topbar-left{display:flex;align-items:center;gap:18px}
+.logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:#c8e86a;letter-spacing:5px;text-shadow:0 0 20px rgba(200,232,106,0.5);transition:all 0.3s}
+.logo span{color:#ff2200}
+body.red-alert .logo{color:#ff8888;text-shadow:0 0 20px rgba(255,50,50,0.8)}
 
-  .boot-header {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 28px; font-weight: 900;
-    color: #c8e86a; letter-spacing: 8px; margin-bottom: 8px;
-    text-shadow: 0 0 30px rgba(200,232,106,0.6);
-  }
-  .boot-header span { color: #ff4444; }
-  .boot-sub { font-size: 11px; letter-spacing: 4px; color: #3d5518; margin-bottom: 40px; }
+/* OPERATOR PHOTO */
+.operator-block{border-left:1px solid #1a2a0a;padding-left:18px;display:flex;align-items:center;gap:12px}
+.photo-frame{position:relative;flex-shrink:0;width:56px;height:56px}
+.operator-photo{width:56px;height:56px;object-fit:cover;object-position:center 15%;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));filter:saturate(0) sepia(0.5) hue-rotate(60deg) brightness(0.8) contrast(1.2);transition:filter 0.3s}
+body.red-alert .operator-photo{filter:saturate(0.2) sepia(1) hue-rotate(-20deg) brightness(0.7) contrast(1.3)}
+.photo-frame::before,.photo-frame::after{content:'';position:absolute;width:10px;height:10px;pointer-events:none}
+.photo-frame::before{top:-2px;left:-2px;border-top:2px solid #8fbc3a;border-left:2px solid #8fbc3a}
+.photo-frame::after{bottom:-2px;right:-2px;border-bottom:2px solid #8fbc3a;border-right:2px solid #8fbc3a}
+.photo-scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(143,188,58,0.8),transparent);animation:scanLine 2.5s linear infinite;top:0}
+@keyframes scanLine{0%{top:0;opacity:1}85%{top:100%;opacity:1}100%{top:100%;opacity:0}}
+.photo-id{position:absolute;bottom:-14px;left:0;right:0;text-align:center;font-size:7px;color:#3d5518;letter-spacing:1px}
 
-  #bootLines { width: 100%; max-width: 700px; }
+.operator-info{display:flex;flex-direction:column;gap:2px}
+.op-label{font-size:8px;letter-spacing:3px;color:#3d5518;text-transform:uppercase}
+.op-name{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:#c8e86a;letter-spacing:3px;text-shadow:0 0 10px rgba(200,232,106,0.4);transition:color 0.3s}
+body.red-alert .op-name{color:#ff9999}
+.op-role{font-size:9px;color:#5a7520;letter-spacing:2px}
+.op-status{font-size:8px;color:#8fbc3a;letter-spacing:1px;display:flex;align-items:center;gap:4px}
+.op-status::before{content:'';width:5px;height:5px;border-radius:50%;background:#8fbc3a;animation:pulse 1.5s infinite;flex-shrink:0}
+body.red-alert .op-status::before{background:#ff2200;animation:pulseRed 0.5s infinite}
+body.red-alert .op-status{color:#ff6666}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 4px #8fbc3a}50%{opacity:0.3;box-shadow:none}}
+@keyframes pulseRed{0%,100%{opacity:1;box-shadow:0 0 8px #ff2200}50%{opacity:0.2;box-shadow:none}}
 
-  .boot-line { font-size: 12px; line-height: 2; opacity: 0; transition: opacity 0.1s; }
-  .boot-line .tag { margin-right: 12px; }
-  .boot-line .msg { color: #5a7520; }
-  .boot-line.ok .tag { color: #8fbc3a; }
-  .boot-line.ok .msg { color: #6a8a30; }
-  .boot-line.err .tag { color: #ff4444; }
-  .boot-line.err .msg { color: #cc4444; }
-  .boot-line.warn .tag { color: #ffaa33; }
-  .boot-line.warn .msg { color: #cc8822; }
+.topbar-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sys-status{font-size:10px;letter-spacing:2px;color:#8fbc3a;transition:color 0.3s}
+body.red-alert .sys-status{color:#ff4444}
+.timestamp{font-size:10px;color:#3d5518;letter-spacing:1px}
+.session-id{font-size:8px;color:#2a3d10;letter-spacing:1px}
 
-  .boot-progress-wrap { margin-top: 24px; width: 100%; max-width: 700px; }
-  .boot-progress-label { display: flex; justify-content: space-between; font-size: 10px; color: #3d5518; letter-spacing: 2px; margin-bottom: 6px; }
-  .boot-progress-track { height: 2px; background: #1a2410; width: 100%; }
-  .boot-progress-fill { height: 100%; background: #8fbc3a; width: 0%; transition: width 0.2s ease; box-shadow: 0 0 8px rgba(143,188,58,0.6); }
+/* SIREN */
+#sirenBar{display:none;text-align:center;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;letter-spacing:6px;color:#ff2200;padding:10px;border:1px solid #ff2200;margin-bottom:14px;background:rgba(255,0,0,0.05);animation:sirenAnim 0.5s infinite}
+body.red-alert #sirenBar{display:block}
+@keyframes sirenAnim{0%,100%{color:#ff2200;border-color:#ff2200;text-shadow:0 0 20px rgba(255,34,0,0.8)}50%{color:#ff8888;border-color:#ff6666;text-shadow:0 0 40px rgba(255,100,0,1)}}
 
-  /* RED ALERT OVERLAY */
-  #redOverlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(255,0,0,0); pointer-events: none; z-index: 7000;
-  }
-  body.red-alert #redOverlay { animation: redPulse 1.2s infinite; }
-  @keyframes redPulse { 0%,100%{background:rgba(255,0,0,0)} 50%{background:rgba(255,0,0,0.07)} }
+.alert-banner{display:flex;align-items:center;gap:10px;background:rgba(255,34,0,0.06);border:1px solid rgba(255,34,0,0.25);border-left:4px solid #ff2200;padding:8px 14px;margin-bottom:14px;font-size:11px;letter-spacing:2px;color:#ff7755;transition:all 0.3s}
+body.red-alert .alert-banner{background:rgba(255,20,0,0.15);border-color:#ff2200;animation:alertBlink 0.7s infinite}
+@keyframes alertBlink{0%,100%{opacity:1}50%{opacity:0.7}}
+.alert-icon{color:#ff2200;animation:blink 0.8s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.red-btn{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:6px 16px;background:transparent;border:1px solid #ff2200;color:#ff2200;cursor:pointer;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%);transition:all 0.2s}
+.red-btn:hover{background:rgba(255,34,0,0.15)}
+body.red-alert .red-btn{background:rgba(255,0,0,0.2);color:#ffaaaa;border-color:#ff0000}
 
-  /* MAIN UI */
-  .main {
-    position: relative; z-index: 1;
-    padding: 16px; max-width: 1100px; margin: 0 auto;
-    opacity: 0; transition: opacity 0.8s;
-  }
-  .main.visible { opacity: 1; }
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.stat-card{border:1px solid #1a2a0a;border-top:2px solid #4a7a1a;padding:12px;background:rgba(0,5,0,0.6);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);transition:all 0.3s}
+.stat-card.danger{border-top-color:#ff2200}
+.stat-card.warn{border-top-color:#ff9900}
+.stat-card.info{border-top-color:#0088cc}
+.stat-card.white{border-top-color:#88aacc}
+body.red-alert .stat-card{border-color:#2a0a0a;background:rgba(10,0,0,0.7);border-top-color:#880000}
+.stat-label{font-size:8px;letter-spacing:3px;color:#3d5518;margin-bottom:6px;text-transform:uppercase}
+.stat-value{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:700;color:#c8e86a;line-height:1;transition:color 0.3s}
+.stat-card.danger .stat-value{color:#ff5544}
+.stat-card.warn .stat-value{color:#ffaa33}
+.stat-card.info .stat-value{color:#44aaff}
+.stat-card.white .stat-value{color:#aabbcc}
+body.red-alert .stat-value{color:#ff7777!important}
+.stat-delta{font-size:9px;color:#3d5518;margin-top:3px}
 
-  /* TOPBAR */
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    border: 1px solid #3a4d1a; border-left: 4px solid #8fbc3a;
-    padding: 10px 16px; margin-bottom: 16px;
-    background: rgba(143,188,58,0.04);
-    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-    transition: border-color 0.3s, background 0.3s;
-  }
-  body.red-alert .topbar { border-left-color: #ff2222; border-color: #4d1a1a; background: rgba(255,30,30,0.06); }
+/* MAIN GRID */
+.content-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 
-  .topbar-left { display: flex; align-items: center; gap: 20px; }
+.panel{border:1px solid #1a2a0a;background:rgba(0,3,0,0.7);overflow:hidden;transition:all 0.3s}
+body.red-alert .panel{border-color:#2a0808;background:rgba(8,0,0,0.8)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-bottom:1px solid #1a2a0a;background:rgba(143,188,58,0.03);transition:all 0.3s}
+body.red-alert .panel-header{background:rgba(255,20,0,0.05);border-bottom-color:#2a0808}
+.panel-title{font-size:9px;letter-spacing:3px;color:#6a9a30;text-transform:uppercase;transition:color 0.3s}
+body.red-alert .panel-title{color:#ff5544}
+.panel-badge{font-size:8px;padding:2px 7px;border:1px solid currentColor;letter-spacing:1px}
+.b-green{color:#8fbc3a}.b-red{color:#ff2200}.b-yellow{color:#ff9900}.b-blue{color:#44aaff}
+.panel-body{padding:12px}
 
-  .logo {
-    font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900;
-    color: #c8e86a; letter-spacing: 4px;
-    text-shadow: 0 0 20px rgba(200,232,106,0.4);
-    transition: color 0.3s, text-shadow 0.3s;
-  }
-  .logo span { color: #ff4444; }
-  body.red-alert .logo { color: #ff8888; text-shadow: 0 0 20px rgba(255,80,80,0.6); }
+/* GLOBE */
+.globe-panel .panel-body{padding:0;display:flex;flex-direction:column;align-items:center;background:#000;position:relative;overflow:hidden}
+#globeCanvas{display:block}
+.globe-overlay{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;background:radial-gradient(circle at center,transparent 55%,rgba(0,3,0,0.95) 80%)}
+.globe-stats{display:flex;justify-content:space-around;padding:8px 12px;border-top:1px solid #1a2a0a;font-size:9px;letter-spacing:1px;width:100%}
+.globe-stat-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:#3d5518}
+.globe-stat-val{color:#8fbc3a;font-family:'Orbitron',sans-serif;font-size:11px}
+body.red-alert .globe-stat-val{color:#ff6644}
 
-  .operator-block { border-left: 1px solid #2a3d12; padding-left: 20px; }
-  .operator-label { font-size: 8px; letter-spacing: 3px; color: #3d5518; text-transform: uppercase; }
-  .operator-name { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; color: #c8e86a; letter-spacing: 2px; transition: color 0.3s; }
-  body.red-alert .operator-name { color: #ff9999; }
-  .operator-role { font-size: 9px; color: #5a7520; letter-spacing: 2px; }
+/* THREAT BARS */
+.threat-item{margin-bottom:10px}
+.threat-row{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;color:#6a9a30;transition:color 0.3s}
+body.red-alert .threat-row{color:#ff7755}
+.threat-pct{color:#3d5518}
+.bar-track{height:3px;background:#0a1005;position:relative;overflow:hidden;transition:background 0.3s}
+body.red-alert .bar-track{background:#1a0505}
+.bar-fill{height:100%;position:absolute;left:0;top:0;transition:width 1s ease}
+.bar-fill.c{background:#ff2200;box-shadow:0 0 6px rgba(255,34,0,0.6)}
+.bar-fill.h{background:#ff9900}
+.bar-fill.m{background:#ffcc00}
 
-  .topbar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+/* LOG */
+.log-feed{font-size:9px;line-height:1.9;max-height:300px;overflow:hidden}
+.log-line{display:flex;gap:6px;border-bottom:1px solid rgba(143,188,58,0.04);padding:2px 0;animation:fadeIn 0.3s ease}
+body.red-alert .log-line{border-bottom-color:rgba(255,30,0,0.06)}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:none}}
+.log-time{color:#2d4018;min-width:44px}
+.lc{color:#ff2200;min-width:38px}
+.lw{color:#ff9900;min-width:38px}
+.li{color:#6a9a30;min-width:38px}
+.lm{color:#4a6820;flex:1}
+body.red-alert .li{color:#ff5544}
+body.red-alert .lm{color:#773322}
 
-  .status-dot {
-    width: 8px; height: 8px; border-radius: 50%; background: #8fbc3a;
-    animation: pulse 1.5s infinite; display: inline-block; margin-right: 6px; transition: background 0.3s;
-  }
-  body.red-alert .status-dot { background: #ff2222; animation: pulse-red 0.6s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 6px #8fbc3a} 50%{opacity:0.4;box-shadow:none} }
-  @keyframes pulse-red { 0%,100%{opacity:1;box-shadow:0 0 10px #ff2222} 50%{opacity:0.3;box-shadow:none} }
+/* BOTTOM */
+.bottom-row{display:grid;grid-template-columns:1.3fr 1fr;gap:12px}
 
-  .status-label { font-size: 11px; color: #8fbc3a; letter-spacing: 2px; transition: color 0.3s; }
-  body.red-alert .status-label { color: #ff4444; }
-  .timestamp { font-size: 11px; color: #5a7520; letter-spacing: 1px; }
+/* RADAR */
+.radar-svg-wrap{display:flex;justify-content:center;padding:8px 0}
 
-  /* SIREN BAR */
-  #sirenBar {
-    display: none; text-align: center;
-    font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 900;
-    letter-spacing: 6px; color: #ff2222; padding: 10px;
-    border: 1px solid #ff2222; margin-bottom: 16px;
-    animation: sirenAnim 0.6s infinite; background: rgba(255,0,0,0.06);
-  }
-  body.red-alert #sirenBar { display: block; }
-  @keyframes sirenAnim { 0%,100%{color:#ff2222;border-color:#ff2222;background:rgba(255,0,0,0.06)} 50%{color:#ff8888;border-color:#ff6666;background:rgba(255,0,0,0.12)} }
+/* SESSION */
+.session-list{display:flex;flex-direction:column;gap:5px}
+.session-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid #0a1a05;font-size:9px;transition:border-color 0.3s}
+body.red-alert .session-item{border-color:#1a0505}
+.sip{color:#a8cc60;flex:1;font-size:9px}
+body.red-alert .sip{color:#ff9988}
+.sloc{color:#3d5518;font-size:8px}
+.sa{color:#8fbc3a;font-size:8px;letter-spacing:1px}
+.ss{color:#ff2200;font-size:8px;letter-spacing:1px}
+.sb{color:#ff9900;font-size:8px;letter-spacing:1px}
 
-  /* ALERT BANNER */
-  .alert-banner {
-    display: flex; align-items: center; gap: 12px;
-    background: rgba(255,68,68,0.08); border: 1px solid rgba(255,68,68,0.3); border-left: 4px solid #ff4444;
-    padding: 8px 16px; margin-bottom: 16px;
-    font-size: 12px; letter-spacing: 2px; color: #ff8888; transition: all 0.3s;
-  }
-  body.red-alert .alert-banner { background: rgba(255,20,20,0.18); border-color: #ff2222; border-left-color: #ff0000; color: #ffaaaa; animation: alertBlink 0.8s infinite; }
-  @keyframes alertBlink { 0%,100%{opacity:1} 50%{opacity:0.7} }
-  .alert-icon { color: #ff4444; font-size: 14px; animation: blink 1s step-end infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+/* FW */
+.fw-bars{display:flex;align-items:flex-end;gap:4px;height:70px;padding:0 4px}
+.fw-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center}
+.fw-bar{width:100%;background:#2a4a0a;min-height:3px;transition:background 0.3s}
+.fw-bar.spike{background:#ff2200}
+body.red-alert .fw-bar{background:#550a0a}
+body.red-alert .fw-bar.spike{background:#ff0000;box-shadow:0 0 10px #ff0000}
 
-  .red-btn {
-    margin-left: auto; font-family: 'Share Tech Mono', monospace;
-    font-size: 10px; letter-spacing: 2px; padding: 6px 16px;
-    background: transparent; border: 1px solid #ff4444; color: #ff4444;
-    cursor: pointer; text-transform: uppercase; transition: all 0.2s;
-    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
-  }
-  .red-btn:hover { background: rgba(255,68,68,0.15); }
-  body.red-alert .red-btn { background: rgba(255,0,0,0.2); color: #ffaaaa; border-color: #ff0000; }
-
-  /* STATS */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-
-  .stat-card {
-    border: 1px solid #2a3d12; border-top: 2px solid #8fbc3a;
-    padding: 14px; background: rgba(143,188,58,0.03);
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
-    transition: all 0.3s;
-  }
-  body.red-alert .stat-card { border-color: #3d1a1a; background: rgba(255,30,30,0.04); border-top-color: #882222; }
-  body.red-alert .stat-card.danger { border-top-color: #ff0000; }
-  body.red-alert .stat-card.warn { border-top-color: #ff6600; }
-  body.red-alert .stat-card.info { border-top-color: #cc0044; }
-
-  .stat-label { font-size: 9px; letter-spacing: 3px; color: #5a7520; margin-bottom: 8px; text-transform: uppercase; }
-  .stat-value { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 700; color: #c8e86a; line-height: 1; transition: color 0.3s; }
-  .stat-card.danger .stat-value { color: #ff6666; }
-  .stat-card.danger { border-top-color: #ff4444; }
-  .stat-card.warn .stat-value { color: #ffaa33; }
-  .stat-card.warn { border-top-color: #ff9900; }
-  .stat-card.info .stat-value { color: #66ccff; }
-  .stat-card.info { border-top-color: #0099cc; }
-  body.red-alert .stat-value { color: #ff9999 !important; }
-  .stat-delta { font-size: 10px; color: #5a7520; margin-top: 4px; }
-
-  /* CONTENT GRID */
-  .content-grid { display: grid; grid-template-columns: 1fr 1fr 320px; gap: 12px; margin-bottom: 16px; }
-
-  .panel { border: 1px solid #2a3d12; background: rgba(0,0,0,0.4); overflow: hidden; transition: border-color 0.3s, background 0.3s; }
-  body.red-alert .panel { border-color: #3d1010; background: rgba(20,0,0,0.5); }
-
-  .panel-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 14px; border-bottom: 1px solid #2a3d12;
-    background: rgba(143,188,58,0.05); transition: all 0.3s;
-  }
-  body.red-alert .panel-header { background: rgba(255,20,20,0.06); border-bottom-color: #3d1010; }
-
-  .panel-title { font-size: 10px; letter-spacing: 3px; color: #8fbc3a; text-transform: uppercase; transition: color 0.3s; }
-  body.red-alert .panel-title { color: #ff6666; }
-
-  .panel-badge { font-size: 9px; padding: 2px 8px; border: 1px solid currentColor; letter-spacing: 1px; }
-  .badge-green { color: #8fbc3a; }
-  .badge-red { color: #ff4444; }
-  .badge-yellow { color: #ffaa33; }
-  .panel-body { padding: 14px; }
-
-  /* THREAT BARS */
-  .threat-item { margin-bottom: 12px; }
-  .threat-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: #8fbc3a; transition: color 0.3s; }
-  body.red-alert .threat-row { color: #ff8888; }
-  .threat-pct { color: #5a7520; }
-  .bar-track { height: 4px; background: #1a2410; position: relative; overflow: hidden; transition: background 0.3s; }
-  body.red-alert .bar-track { background: #2a1010; }
-  .bar-fill { height: 100%; position: absolute; left: 0; top: 0; transition: width 1s ease; }
-  .bar-fill.critical { background: #ff4444; box-shadow: 0 0 8px rgba(255,68,68,0.5); }
-  .bar-fill.high { background: #ff9900; }
-  .bar-fill.medium { background: #ffcc00; }
-  .bar-fill.low { background: #8fbc3a; }
-
-  /* MAP */
-  .map-panel { position: relative; padding: 14px; min-height: 220px; }
-  .fake-map { position: relative; width: 100%; height: 180px; border: 1px solid #2a3d12; overflow: hidden; transition: border-color 0.3s; }
-  body.red-alert .fake-map { border-color: #4d1010; }
-  .map-grid-lines {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background-image: linear-gradient(rgba(143,188,58,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(143,188,58,0.08) 1px, transparent 1px);
-    background-size: 20px 20px; transition: background-image 0.3s;
-  }
-  body.red-alert .map-grid-lines {
-    background-image: linear-gradient(rgba(255,40,40,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,40,40,0.1) 1px, transparent 1px);
-  }
-  .map-label { position: absolute; font-size: 9px; letter-spacing: 1px; color: #5a7520; }
-  .threat-node { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%, -50%); }
-  .threat-node::before {
-    content: ''; position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%); width: 8px; height: 8px;
-    border-radius: 50%; animation: ripple 2s infinite;
-  }
-  @keyframes ripple { 0%{width:8px;height:8px;opacity:1;box-shadow:0 0 0 0 currentColor} 100%{width:32px;height:32px;opacity:0;box-shadow:0 0 0 16px transparent} }
-  .node-red { background: #ff4444; color: #ff4444; }
-  .node-yellow { background: #ffaa33; color: #ffaa33; }
-  .node-green { background: #8fbc3a; color: #8fbc3a; }
-  .crosshair { position: absolute; width: 20px; height: 20px; border: 1px solid #ff4444; transform: translate(-50%, -50%); }
-  .crosshair::before, .crosshair::after { content: ''; position: absolute; background: #ff4444; }
-  .crosshair::before { width: 1px; height: 100%; top: 0; left: 50%; }
-  .crosshair::after { height: 1px; width: 100%; top: 50%; left: 0; }
-
-  /* LOG */
-  .log-feed { font-size: 10px; line-height: 1.8; max-height: 200px; overflow: hidden; }
-  .log-line { display: flex; gap: 8px; border-bottom: 1px solid rgba(143,188,58,0.05); padding: 3px 0; animation: fadeIn 0.3s ease; }
-  body.red-alert .log-line { border-bottom-color: rgba(255,40,40,0.08); }
-  @keyframes fadeIn { from{opacity:0;transform:translateX(-4px)} to{opacity:1;transform:none} }
-  .log-time { color: #3d5518; min-width: 50px; }
-  .log-type-crit { color: #ff4444; min-width: 40px; }
-  .log-type-warn { color: #ffaa33; min-width: 40px; }
-  .log-type-info { color: #8fbc3a; min-width: 40px; }
-  .log-msg { color: #6a8a30; flex: 1; }
-  body.red-alert .log-type-info { color: #ff6666; }
-  body.red-alert .log-msg { color: #884444; }
-
-  /* BOTTOM */
-  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .fw-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; padding: 0 4px; }
-  .fw-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .fw-bar { width: 100%; background: #8fbc3a; min-height: 4px; transition: background 0.3s; }
-  .fw-bar.spike { background: #ff4444; }
-  body.red-alert .fw-bar { background: #882222; }
-  body.red-alert .fw-bar.spike { background: #ff0000; box-shadow: 0 0 8px #ff0000; }
-
-  .session-list { display: flex; flex-direction: column; gap: 6px; }
-  .session-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border: 1px solid #1a2410; font-size: 10px; transition: border-color 0.3s; }
-  body.red-alert .session-item { border-color: #2a1010; }
-  .session-ip { color: #c8e86a; font-family: 'Share Tech Mono'; flex: 1; transition: color 0.3s; }
-  body.red-alert .session-ip { color: #ff9999; }
-  .session-loc { color: #5a7520; font-size: 9px; }
-  .session-status { font-size: 9px; letter-spacing: 1px; }
-  .s-active { color: #8fbc3a; }
-  .s-suspicious { color: #ff4444; }
-  .s-blocked { color: #ff9900; }
-
-  /* RESPONSIVE */
-  @media (max-width: 900px) {
-    .content-grid { grid-template-columns: 1fr; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .bottom-row { grid-template-columns: 1fr; }
-    #bootScreen { padding: 30px 24px; }
-    .boot-header { font-size: 20px; }
-  }
+@media(max-width:900px){.content-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(2,1fr)}.bottom-row{grid-template-columns:1fr}#bootScreen{padding:28px 24px}.boot-header{font-size:22px}}
 </style>
 </head>
 <body>
@@ -296,191 +187,227 @@
 <div class="grid-bg"></div>
 <div id="redOverlay"></div>
 
-<!-- BOOT SCREEN -->
+<!-- BOOT -->
 <div id="bootScreen">
   <div class="boot-header">TACT<span>OPS</span></div>
-  <div class="boot-sub">TACTICAL CYBER OPERATIONS // RESTRICTED ACCESS</div>
+  <div class="boot-sub">GLOBAL CYBER THREAT COMMAND // RESTRICTED ACCESS</div>
   <div id="bootLines"></div>
   <div class="boot-progress-wrap">
-    <div class="boot-progress-label">
-      <span>SYSTEM INIT</span>
-      <span id="bootPct">0%</span>
-    </div>
-    <div class="boot-progress-track">
-      <div class="boot-progress-fill" id="bootFill"></div>
-    </div>
+    <div class="boot-progress-label"><span>SYSTEM INIT</span><span id="bootPct">0%</span></div>
+    <div class="boot-progress-track"><div class="boot-progress-fill" id="bootFill"></div></div>
   </div>
 </div>
 
-<!-- MAIN UI -->
+<!-- MAIN -->
 <div class="main" id="mainUI">
 
+  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
       <div class="logo">TACT<span>OPS</span></div>
       <div class="operator-block">
-        <div class="operator-label">Operator</div>
-        <div class="operator-name">BENJAMIN SAFI</div>
-        <div class="operator-role">IT SECURITY // CLEARANCE LVL 3</div>
+        <div class="photo-frame">
+          <img class="operator-photo" id="opPhoto" src="" alt="operator">
+          <div class="photo-scan"></div>
+          <div class="photo-id">ID-BS-0047</div>
+        </div>
+        <div class="operator-info">
+          <div class="op-label">Classified Operator</div>
+          <div class="op-name">BENJAMIN SAFI</div>
+          <div class="op-role">CYBER OPS // CLEARANCE LVL 5 // GLOBAL</div>
+          <div class="op-status" id="opStatus">ACTIVE SESSION</div>
+        </div>
       </div>
     </div>
     <div class="topbar-right">
-      <div><span class="status-dot"></span><span class="status-label" id="sysStatus">SYS ONLINE</span></div>
-      <div class="timestamp" id="clock">--:--:-- // CLASSIFIED</div>
+      <div class="sys-status" id="sysStatus">■ ALL SYSTEMS OPERATIONAL</div>
+      <div class="timestamp" id="clock">--:--:-- UTC // CLASSIFIED</div>
+      <div class="session-id" id="sessionId">SESSION: --</div>
     </div>
   </div>
 
-  <div id="sirenBar">⚠ RED ALERT — CRITICAL BREACH DETECTED — BENJAMIN SAFI NOTIFIED ⚠</div>
+  <!-- SIREN -->
+  <div id="sirenBar">⚠ ⚠ RED ALERT — CRITICAL BREACH — OPERATOR BENJAMIN SAFI ENGAGED ⚠ ⚠</div>
 
+  <!-- ALERT BANNER -->
   <div class="alert-banner">
     <span class="alert-icon">▲</span>
-    <span id="alertText">THREAT LEVEL : <strong>ELEVATED</strong></span>
-    <span style="color:#3d5518">|</span>
-    <span id="alertSub">14 ACTIVE INTRUSION ATTEMPTS DETECTED</span>
-    <span style="color:#3d5518">|</span>
-    <span style="color:#5a7520" id="alertStatus">PERIMETER FIREWALL: ENGAGED</span>
+    <span id="alertText">THREAT LEVEL : <strong>CRITICAL</strong></span>
+    <span style="color:#2a3d10">|</span>
+    <span id="alertSub">GLOBAL MONITORING ACTIVE — 14 ACTIVE VECTORS</span>
+    <span style="color:#2a3d10">|</span>
+    <span id="alertStatus" style="color:#4a6820">PERIMETER: ENGAGED</span>
     <button class="red-btn" id="redAlertBtn" onclick="toggleRedAlert()">⚡ RED ALERT</button>
   </div>
 
+  <!-- STATS -->
   <div class="stats-row">
     <div class="stat-card danger">
       <div class="stat-label">Threats Detected</div>
       <div class="stat-value" id="stat1">247</div>
-      <div class="stat-delta">▲ +18 in last hour</div>
+      <div class="stat-delta">▲ +18 / last hour</div>
     </div>
     <div class="stat-card warn">
       <div class="stat-label">Packets Blocked</div>
-      <div class="stat-value">14.3K</div>
+      <div class="stat-value" id="stat2">14.3K</div>
       <div class="stat-delta">▲ high traffic</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Systems Online</div>
       <div class="stat-value">38/40</div>
-      <div class="stat-delta">▼ 2 in maintenance</div>
+      <div class="stat-delta">▼ 2 maintenance</div>
     </div>
     <div class="stat-card info">
+      <div class="stat-label">Global Nodes</div>
+      <div class="stat-value">127</div>
+      <div class="stat-delta">■ 6 continents</div>
+    </div>
+    <div class="stat-card white">
       <div class="stat-label">Uptime</div>
       <div class="stat-value">99.7%</div>
       <div class="stat-delta">■ nominal</div>
     </div>
   </div>
 
+  <!-- CONTENT -->
   <div class="content-grid">
 
+    <!-- THREAT ANALYSIS -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Threat Analysis</span>
-        <span class="panel-badge badge-red">LIVE</span>
+        <span class="panel-badge b-red">LIVE</span>
       </div>
       <div class="panel-body">
-        <div class="threat-item">
-          <div class="threat-row"><span>SQL Injection</span><span class="threat-pct">82%</span></div>
-          <div class="bar-track"><div class="bar-fill critical" style="width:82%"></div></div>
-        </div>
-        <div class="threat-item">
-          <div class="threat-row"><span>Brute Force</span><span class="threat-pct">67%</span></div>
-          <div class="bar-track"><div class="bar-fill high" style="width:67%"></div></div>
-        </div>
-        <div class="threat-item">
-          <div class="threat-row"><span>Port Scan</span><span class="threat-pct">55%</span></div>
-          <div class="bar-track"><div class="bar-fill medium" style="width:55%"></div></div>
-        </div>
-        <div class="threat-item">
-          <div class="threat-row"><span>DDoS Flood</span><span class="threat-pct">44%</span></div>
-          <div class="bar-track"><div class="bar-fill high" style="width:44%"></div></div>
-        </div>
-        <div class="threat-item">
-          <div class="threat-row"><span>Phishing Payload</span><span class="threat-pct">28%</span></div>
-          <div class="bar-track"><div class="bar-fill medium" style="width:28%"></div></div>
-        </div>
-        <div class="threat-item">
-          <div class="threat-row"><span>Zero-Day Attempt</span><span class="threat-pct">11%</span></div>
-          <div class="bar-track"><div class="bar-fill critical" style="width:11%"></div></div>
-        </div>
-      </div>
-    </div>
+        <div class="threat-item"><div class="threat-row"><span>SQL Injection</span><span class="threat-pct">82%</span></div><div class="bar-track"><div class="bar-fill c" style="width:82%"></div></div></div>
+        <div class="threat-item"><div class="threat-row"><span>Brute Force</span><span class="threat-pct">67%</span></div><div class="bar-track"><div class="bar-fill h" style="width:67%"></div></div></div>
+        <div class="threat-item"><div class="threat-row"><span>Port Scan</span><span class="threat-pct">55%</span></div><div class="bar-track"><div class="bar-fill m" style="width:55%"></div></div></div>
+        <div class="threat-item"><div class="threat-row"><span>DDoS Flood</span><span class="threat-pct">44%</span></div><div class="bar-track"><div class="bar-fill h" style="width:44%"></div></div></div>
+        <div class="threat-item"><div class="threat-row"><span>Phishing Payload</span><span class="threat-pct">28%</span></div><div class="bar-track"><div class="bar-fill m" style="width:28%"></div></div></div>
+        <div class="threat-item"><div class="threat-row"><span>Zero-Day Attempt</span><span class="threat-pct">11%</span></div><div class="bar-track"><div class="bar-fill c" style="width:11%"></div></div></div>
+        <div class="threat-item"><div class="threat-row"><span>Ransomware Probe</span><span class="threat-pct">7%</span></div><div class="bar-track"><div class="bar-fill c" style="width:7%"></div></div></div>
 
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-title">Origin Tracking</span>
-        <span class="panel-badge badge-yellow">4 TARGETS</span>
-      </div>
-      <div class="map-panel">
-        <div class="fake-map">
-          <div class="map-grid-lines"></div>
-          <span class="map-label" style="top:4px;left:4px">GRID 44N</span>
-          <span class="map-label" style="bottom:4px;right:4px">SECTOR 7</span>
-          <div class="threat-node node-red" style="top:35%;left:22%"></div>
-          <div class="crosshair" style="top:35%;left:22%"></div>
-          <div class="threat-node node-red" style="top:55%;left:68%"></div>
-          <div class="crosshair" style="top:55%;left:68%"></div>
-          <div class="threat-node node-yellow" style="top:25%;left:75%"></div>
-          <div class="threat-node node-green" style="top:70%;left:40%"></div>
-          <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.3" viewBox="0 0 300 180">
-            <line x1="66" y1="63" x2="204" y2="99" stroke="#ff4444" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="66" y1="63" x2="225" y2="45" stroke="#ff9900" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <!-- RADAR inside threat panel -->
+        <div style="margin-top:14px;border-top:1px solid #1a2a0a;padding-top:12px">
+          <div style="font-size:9px;letter-spacing:3px;color:#6a9a30;margin-bottom:8px">RADAR // SECTOR SCAN</div>
+          <div style="display:flex;justify-content:center">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <defs>
+              <radialGradient id="rg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#8fbc3a" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#8fbc3a" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="75" cy="75" r="70" fill="#020802"/>
+            <circle cx="75" cy="75" r="70" fill="none" stroke="#0e1e06" stroke-width="0.5"/>
+            <circle cx="75" cy="75" r="52" fill="none" stroke="#0e1e06" stroke-width="0.5"/>
+            <circle cx="75" cy="75" r="35" fill="none" stroke="#0e1e06" stroke-width="0.5"/>
+            <circle cx="75" cy="75" r="17" fill="none" stroke="#0e1e06" stroke-width="0.5"/>
+            <line x1="5" y1="75" x2="145" y2="75" stroke="#0e1e06" stroke-width="0.5"/>
+            <line x1="75" y1="5" x2="75" y2="145" stroke="#0e1e06" stroke-width="0.5"/>
+            <line x1="25" y1="25" x2="125" y2="125" stroke="#0e1e06" stroke-width="0.5"/>
+            <line x1="125" y1="25" x2="25" y2="125" stroke="#0e1e06" stroke-width="0.5"/>
+            <g id="rSweep" style="transform-origin:75px 75px;animation:sweep 3s linear infinite">
+              <path d="M75,75 L75,5 A70,70 0 0,1 134,110 Z" fill="url(#rg)" opacity="0.8"/>
+            </g>
+            <circle cx="75" cy="75" r="70" fill="url(#rg)"/>
+            <circle cx="75" cy="75" r="3" fill="#8fbc3a"/>
+            <circle id="rb1" cx="45" cy="40" r="3" fill="#ff2200" opacity="0"><animate attributeName="opacity" values="0;1;0.5" dur="0.2s" begin="indefinite" fill="freeze"/></circle>
+            <circle id="rb2" cx="108" cy="92" r="4" fill="#ff2200" opacity="0"/>
+            <circle id="rb3" cx="90" cy="38" r="2.5" fill="#ff9900" opacity="0"/>
+            <circle id="rb4" cx="38" cy="100" r="2" fill="#8fbc3a" opacity="0"/>
+            <circle id="rb5" cx="120" cy="55" r="3" fill="#ff2200" opacity="0"/>
+            <style>
+              #rSweep{animation:sweep 3s linear infinite;transform-origin:75px 75px}
+              @keyframes sweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+              #rb1{animation:bp1 3s linear infinite}
+              #rb2{animation:bp2 3s linear infinite}
+              #rb3{animation:bp3 3s linear infinite}
+              #rb4{animation:bp4 3s linear infinite}
+              #rb5{animation:bp5 3s linear infinite}
+              @keyframes bp1{0%,18%,100%{opacity:0}19%,60%{opacity:1}61%,99%{opacity:0.4}}
+              @keyframes bp2{0%,46%,100%{opacity:0}47%,80%{opacity:1}81%,99%{opacity:0.4}}
+              @keyframes bp3{0%,22%,100%{opacity:0}23%,58%{opacity:1}59%,99%{opacity:0.3}}
+              @keyframes bp4{0%,60%,100%{opacity:0}61%,88%{opacity:1}89%,99%{opacity:0.4}}
+              @keyframes bp5{0%,76%,100%{opacity:0}77%,95%{opacity:1}96%,99%{opacity:0.3}}
+            </style>
           </svg>
-        </div>
-        <div style="display:flex;gap:16px;margin-top:10px;font-size:9px;letter-spacing:2px;">
-          <span><span style="color:#ff4444">■</span> CRITICAL</span>
-          <span><span style="color:#ffaa33">■</span> HIGH</span>
-          <span><span style="color:#8fbc3a">■</span> MONITOR</span>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:6px;font-size:8px;letter-spacing:2px;">
+            <span><span style="color:#ff2200">■</span> CRIT</span>
+            <span><span style="color:#ff9900">■</span> HIGH</span>
+            <span><span style="color:#8fbc3a">■</span> MON</span>
+            <span style="margin-left:auto;color:#3d5518" id="rCount">5 CONTACTS</span>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- GLOBE -->
+    <div class="panel globe-panel" style="grid-row:span 1">
+      <div class="panel-header">
+        <span class="panel-title">Global Threat Map</span>
+        <span class="panel-badge b-red">LIVE</span>
+      </div>
+      <div class="panel-body" style="min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;position:relative">
+        <canvas id="globeCanvas" width="300" height="300"></canvas>
+        <div class="globe-overlay"></div>
+        <div class="globe-stats">
+          <div class="globe-stat-item"><div class="globe-stat-val" id="gs1">127</div><div>NODES</div></div>
+          <div class="globe-stat-item"><div class="globe-stat-val" id="gs2">14</div><div>THREATS</div></div>
+          <div class="globe-stat-item"><div class="globe-stat-val" id="gs3">6</div><div>REGIONS</div></div>
+          <div class="globe-stat-item"><div class="globe-stat-val">360°</div><div>SCAN</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE LOG -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Live Event Log</span>
-        <span class="panel-badge badge-green">STREAM</span>
+        <span class="panel-badge b-green">STREAM</span>
       </div>
       <div class="panel-body">
         <div class="log-feed" id="logFeed"></div>
       </div>
     </div>
-
   </div>
 
+  <!-- BOTTOM -->
   <div class="bottom-row">
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Firewall Traffic // 24H</span>
-        <span class="panel-badge badge-green">NOMINAL</span>
+        <span class="panel-badge b-green">NOMINAL</span>
       </div>
       <div class="panel-body">
         <div class="fw-bars" id="fwBars"></div>
-        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:8px;color:#3d5518;letter-spacing:1px;">
+        <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:7px;color:#2d4018;letter-spacing:1px">
           <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>NOW</span>
         </div>
       </div>
     </div>
-
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Active Sessions</span>
-        <span class="panel-badge badge-red">2 FLAGGED</span>
+        <span class="panel-badge b-red">2 FLAGGED</span>
       </div>
       <div class="panel-body">
         <div class="session-list">
-          <div class="session-item" style="background:rgba(143,188,58,0.06);border-color:#3a4d1a">
-            <div class="session-ip">B.SAFI // LOCAL</div>
-            <div class="session-loc">DE // HALLE</div>
-            <div class="session-status s-active">★ OPERATOR</div>
+          <div class="session-item" style="background:rgba(143,188,58,0.05);border-color:#2a3d10">
+            <div class="sip">B.SAFI // OPERATOR</div><div class="sloc">DE // HALLE</div><div class="sa">★ ROOT</div>
           </div>
           <div class="session-item">
-            <div class="session-ip">192.168.1.14</div>
-            <div class="session-loc">DE // BERLIN</div>
-            <div class="session-status s-active">■ AUTH</div>
+            <div class="sip">192.168.1.14</div><div class="sloc">DE // BERLIN</div><div class="sa">■ AUTH</div>
           </div>
-          <div class="session-item" style="background:rgba(255,68,68,0.04);border-color:rgba(255,68,68,0.2)">
-            <div class="session-ip">45.33.32.156</div>
-            <div class="session-loc">RU // UNKNOWN</div>
-            <div class="session-status s-suspicious">▲ SUSPECT</div>
+          <div class="session-item" style="background:rgba(255,34,0,0.04);border-color:rgba(255,34,0,0.2)">
+            <div class="sip">45.33.32.156</div><div class="sloc">RU // UNKNOWN</div><div class="ss">▲ SUSPECT</div>
           </div>
-          <div class="session-item" style="background:rgba(255,153,0,0.04);border-color:rgba(255,153,0,0.2)">
-            <div class="session-ip">103.74.19.4</div>
-            <div class="session-loc">CN // SHANGHAI</div>
-            <div class="session-status s-blocked">✕ BLOCK</div>
+          <div class="session-item" style="background:rgba(255,34,0,0.04);border-color:rgba(255,34,0,0.15)">
+            <div class="sip">103.74.19.4</div><div class="sloc">CN // SHANGHAI</div><div class="sb">✕ BLOCKED</div>
+          </div>
+          <div class="session-item" style="background:rgba(255,34,0,0.04);border-color:rgba(255,34,0,0.15)">
+            <div class="sip">91.108.4.44</div><div class="sloc">IR // TEHRAN</div><div class="ss">▲ SUSPECT</div>
           </div>
         </div>
       </div>
@@ -490,154 +417,281 @@
 </div>
 
 <script>
-  // CLOCK
-  const clockEl = document.getElementById('clock');
-  function updateClock() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
-    const s = String(now.getSeconds()).padStart(2,'0');
-    clockEl.textContent = h+':'+m+':'+s+' // CLASSIFIED';
+// PHOTO
+document.getElementById('opPhoto').src = 'data:image/jpeg;base64,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';
+
+// CLOCK
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=String(n.getUTCHours()).padStart(2,'0')+':'+String(n.getUTCMinutes()).padStart(2,'0')+':'+String(n.getUTCSeconds()).padStart(2,'0')+' UTC // CLASSIFIED';
+}
+setInterval(updateClock,1000); updateClock();
+
+// SESSION ID
+document.getElementById('sessionId').textContent='SESSION: '+Math.random().toString(36).substr(2,8).toUpperCase();
+
+// FW BARS
+const heights=[18,28,22,38,32,48,42,58,52,68,62,78,72,82,88,74,85,92,68,56,82,96,86,66];
+const spikes=[11,22];
+const barsEl=document.getElementById('fwBars');
+heights.forEach((h,i)=>{
+  const w=document.createElement('div');w.className='fw-bar-wrap';
+  const b=document.createElement('div');b.className='fw-bar'+(spikes.includes(i)?' spike':'');
+  b.style.height=h+'px';w.appendChild(b);barsEl.appendChild(w);
+});
+
+// LOG
+const logEvents=[
+  ['CRIT','SQL injection — 45.33.32.156 (RU)'],
+  ['WARN','Port scan — 103.74.19.4 (CN)'],
+  ['INFO','Session auth — B.SAFI // LVL5'],
+  ['CRIT','Brute force x238 — 91.108.4.44 (IR)'],
+  ['INFO','CVE-2024-3171 patch applied'],
+  ['WARN','Outbound anomaly — 10.0.0.88:4444'],
+  ['INFO','Backup integrity — PASSED'],
+  ['CRIT','Zero-day payload — quarantined'],
+  ['WARN','Geo-block — CN/RU/IR segment'],
+  ['INFO','B.SAFI updated firewall rule #882'],
+  ['WARN','Auth failure x5 — vpn.gateway'],
+  ['CRIT','Ransomware probe — sandbox triggered'],
+  ['INFO','IDS signatures synchronized'],
+  ['WARN','Traffic spike +340% — port 443'],
+  ['CRIT','APT group signature detected'],
+  ['INFO','Global scan complete — 127 nodes OK'],
+  ['WARN','TOR exit node detected — blocked'],
+  ['CRIT','Credential dump attempt — thwarted'],
+];
+const logFeed=document.getElementById('logFeed');
+let logIdx=0;
+function addLog(fc){
+  const ev=fc?['CRIT',fc]:logEvents[logIdx%logEvents.length];logIdx++;
+  const n=new Date();
+  const t=String(n.getUTCHours()).padStart(2,'0')+':'+String(n.getUTCMinutes()).padStart(2,'0')+':'+String(n.getUTCSeconds()).padStart(2,'0');
+  const d=document.createElement('div');d.className='log-line';
+  const tc=ev[0]==='CRIT'?'lc':ev[0]==='WARN'?'lw':'li';
+  d.innerHTML='<span class="log-time">'+t+'</span><span class="'+tc+'">'+ev[0]+'</span><span class="lm">'+ev[1]+'</span>';
+  logFeed.insertBefore(d,logFeed.firstChild);
+  if(logFeed.children.length>12) logFeed.removeChild(logFeed.lastChild);
+}
+for(let i=0;i<8;i++) addLog();
+setInterval(addLog,2400);
+
+// STATS
+let b1=247,b2=14300;
+setInterval(()=>{
+  b1+=Math.floor(Math.random()*4);
+  b2+=Math.floor(Math.random()*50);
+  document.getElementById('stat1').textContent=b1;
+  document.getElementById('stat2').textContent=(b2/1000).toFixed(1)+'K';
+},3500);
+
+// RED ALERT
+let redActive=false;
+function toggleRedAlert(){
+  redActive=!redActive;
+  document.body.classList.toggle('red-alert',redActive);
+  const btn=document.getElementById('redAlertBtn');
+  if(redActive){
+    btn.textContent='✕ STAND DOWN';
+    document.getElementById('alertText').innerHTML='THREAT LEVEL : <strong style="color:#ff0000">DEFCON 1</strong>';
+    document.getElementById('alertSub').textContent='BREACH CONFIRMED — FULL LOCKDOWN';
+    document.getElementById('alertStatus').textContent='ALL GATES LOCKED';
+    document.getElementById('sysStatus').textContent='⚠ BREACH DETECTED';
+    document.getElementById('opStatus').textContent='EMERGENCY MODE';
+    addLog('RED ALERT — B.SAFI initiated lockdown protocol');
+    addLog('All non-critical processes terminated');
+    addLog('Countermeasures deployed — sectors 1-7');
+  } else {
+    btn.textContent='⚡ RED ALERT';
+    document.getElementById('alertText').innerHTML='THREAT LEVEL : <strong>CRITICAL</strong>';
+    document.getElementById('alertSub').textContent='GLOBAL MONITORING ACTIVE — 14 ACTIVE VECTORS';
+    document.getElementById('alertStatus').textContent='PERIMETER: ENGAGED';
+    document.getElementById('sysStatus').textContent='■ ALL SYSTEMS OPERATIONAL';
+    document.getElementById('opStatus').textContent='ACTIVE SESSION';
+    addLog('Alert cleared by B.SAFI — resuming ops');
   }
-  setInterval(updateClock, 1000);
-  updateClock();
+}
 
-  // FIREWALL BARS
-  const heights = [20,30,25,40,35,50,45,60,55,70,65,80,75,85,90,78,88,95,72,60,85,100,90,70];
-  const spikes = [11,22];
-  const barsEl = document.getElementById('fwBars');
-  heights.forEach((h,i) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'fw-bar-wrap';
-    const bar = document.createElement('div');
-    bar.className = 'fw-bar'+(spikes.includes(i)?' spike':'');
-    bar.style.height = h+'px';
-    wrap.appendChild(bar);
-    barsEl.appendChild(wrap);
-  });
+// ── GLOBE ──
+(function(){
+  const canvas=document.getElementById('globeCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=300,H=300,R=110,cx=150,cy=150;
+  let angle=0;
 
-  // LIVE LOG
-  const logEvents = [
-    ['CRIT','SQL injection attempt — 45.33.32.156'],
-    ['WARN','Port scan detected — 103.74.19.4'],
-    ['INFO','Session opened — B.SAFI authenticated'],
-    ['CRIT','Brute force: 238 attempts — 91.108.4.44'],
-    ['INFO','Patch applied — CVE-2024-3171'],
-    ['WARN','Unusual outbound — 10.0.0.88:4444'],
-    ['INFO','Backup integrity check passed'],
-    ['CRIT','Zero-day signature detected — sandbox'],
-    ['WARN','Geo-block triggered — CN/RU segment'],
-    ['INFO','Operator B.SAFI — rule updated'],
-    ['WARN','Auth failure x5 — vpn.gateway'],
-    ['CRIT','Payload quarantined — email filter'],
-    ['INFO','IDS rules synchronized'],
-    ['WARN','Traffic spike — +340% on port 443'],
-    ['INFO','SSL cert renewed — *.ops.internal'],
+  // Latitude/longitude dots for continents (simplified)
+  const continentPoints=[];
+  // Europe
+  for(let la=35;la<72;la+=3) for(let lo=-10;lo<40;lo+=4) if(Math.random()<0.55) continentPoints.push([la,lo,'e']);
+  // Asia
+  for(let la=10;la<75;la+=3) for(let lo=40;lo<145;lo+=4) if(Math.random()<0.5) continentPoints.push([la,lo,'a']);
+  // North America
+  for(let la=15;la<75;la+=3) for(let lo=-140;lo<-50;lo+=4) if(Math.random()<0.45) continentPoints.push([la,lo,'n']);
+  // South America
+  for(let la=-55;la<15;la+=3) for(let lo=-80;lo<-35;lo+=5) if(Math.random()<0.45) continentPoints.push([la,lo,'s']);
+  // Africa
+  for(let la=-35;la<38;la+=3) for(let lo=-18;lo<52;lo+=4) if(Math.random()<0.45) continentPoints.push([la,lo,'f']);
+  // Australia
+  for(let la=-45;la<-10;la+=3) for(let lo=112;lo<155;lo+=5) if(Math.random()<0.4) continentPoints.push([la,lo,'u']);
+  // Antarctica
+  for(let la=-85;la<-65;la+=3) for(let lo=-180;lo<180;lo+=6) if(Math.random()<0.3) continentPoints.push([la,lo,'z']);
+
+  // Threat connections
+  const threats=[
+    {from:[52.5,13.4],to:[55.7,37.6],color:'#ff2200'},   // Berlin->Moscow
+    {from:[52.5,13.4],to:[31.2,121.5],color:'#ff2200'},  // Berlin->Shanghai
+    {from:[52.5,13.4],to:[35.7,51.4],color:'#ff9900'},   // Berlin->Tehran
+    {from:[52.5,13.4],to:[40.7,-74.0],color:'#8fbc3a'},  // Berlin->NY
+    {from:[52.5,13.4],to:[-33.9,18.4],color:'#ff9900'},  // Berlin->CapeTown
+    {from:[52.5,13.4],to:[35.7,139.7],color:'#44aaff'},  // Berlin->Tokyo
   ];
-  const logFeed = document.getElementById('logFeed');
-  let logIdx = 0;
-  function addLog(forceCrit) {
-    const ev = forceCrit ? ['CRIT', forceCrit] : logEvents[logIdx % logEvents.length];
-    logIdx++;
-    const now = new Date();
-    const time = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
-    const line = document.createElement('div');
-    line.className = 'log-line';
-    const tc = ev[0]==='CRIT'?'log-type-crit':ev[0]==='WARN'?'log-type-warn':'log-type-info';
-    line.innerHTML = '<span class="log-time">'+time+'</span><span class="'+tc+'">'+ev[0]+'</span><span class="log-msg">'+ev[1]+'</span>';
-    logFeed.insertBefore(line, logFeed.firstChild);
-    if (logFeed.children.length > 8) logFeed.removeChild(logFeed.lastChild);
+
+  function latLonToXYZ(lat,lon,r){
+    const phi=(90-lat)*Math.PI/180;
+    const theta=(lon+angle)*Math.PI/180;
+    return {
+      x:r*Math.sin(phi)*Math.cos(theta),
+      y:r*Math.cos(phi),
+      z:r*Math.sin(phi)*Math.sin(theta)
+    };
   }
-  for (let i=0;i<6;i++) addLog();
-  setInterval(addLog, 2800);
 
-  // STAT COUNTER
-  let base1 = 247;
-  setInterval(() => {
-    base1 += Math.floor(Math.random()*3);
-    document.getElementById('stat1').textContent = base1;
-  }, 4000);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
 
-  // RED ALERT
-  let redActive = false;
-  function toggleRedAlert() {
-    redActive = !redActive;
-    document.body.classList.toggle('red-alert', redActive);
-    const btn = document.getElementById('redAlertBtn');
-    const alertText = document.getElementById('alertText');
-    const alertSub = document.getElementById('alertSub');
-    const alertStatus = document.getElementById('alertStatus');
-    const sysStatus = document.getElementById('sysStatus');
-    if (redActive) {
-      btn.textContent = '✕ STAND DOWN';
-      alertText.innerHTML = 'THREAT LEVEL : <strong>CRITICAL</strong>';
-      alertSub.textContent = 'BREACH CONFIRMED — ALL SYSTEMS COMPROMISED';
-      alertStatus.textContent = 'LOCKDOWN INITIATED';
-      sysStatus.textContent = 'BREACH DETECTED';
-      addLog('RED ALERT triggered by B.SAFI — lockdown active');
-      addLog('All non-essential sessions terminated');
-    } else {
-      btn.textContent = '⚡ RED ALERT';
-      alertText.innerHTML = 'THREAT LEVEL : <strong>ELEVATED</strong>';
-      alertSub.textContent = '14 ACTIVE INTRUSION ATTEMPTS DETECTED';
-      alertStatus.textContent = 'PERIMETER FIREWALL: ENGAGED';
-      sysStatus.textContent = 'SYS ONLINE';
-      addLog('Red alert cleared by B.SAFI — resuming normal ops');
+    // Globe background
+    const grad=ctx.createRadialGradient(cx-25,cy-25,10,cx,cy,R);
+    grad.addColorStop(0,'#061206');
+    grad.addColorStop(0.5,'#030803');
+    grad.addColorStop(1,'#010401');
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.fillStyle=grad;ctx.fill();
+
+    // Grid lines
+    ctx.strokeStyle='rgba(143,188,58,0.08)';ctx.lineWidth=0.5;
+    // Latitude lines
+    for(let la=-80;la<=80;la+=20){
+      const y0=latLonToXYZ(la,0,R);
+      if(Math.abs(y0.y)<R){
+        const r2=Math.sqrt(R*R-y0.y*y0.y);
+        ctx.beginPath();ctx.ellipse(cx,cy-y0.y,r2,r2*0.15,0,0,Math.PI*2);
+        ctx.stroke();
+      }
     }
+    // Longitude lines
+    for(let lo=0;lo<360;lo+=30){
+      const pts=[];
+      for(let la=-90;la<=90;la+=5){
+        const p=latLonToXYZ(la,lo,R);
+        if(p.z>=0) pts.push([cx+p.x,cy-p.y]);
+      }
+      if(pts.length>1){
+        ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+        pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+        ctx.stroke();
+      }
+    }
+
+    // Continent dots
+    continentPoints.forEach(([lat,lon,type])=>{
+      const p=latLonToXYZ(lat,lon,R);
+      if(p.z<0) return;
+      const brightness=0.3+0.7*(p.z/R);
+      ctx.beginPath();ctx.arc(cx+p.x,cy-p.y,1,0,Math.PI*2);
+      ctx.fillStyle=`rgba(143,188,58,${brightness*0.7})`;
+      ctx.fill();
+    });
+
+    // Threat arcs
+    threats.forEach(th=>{
+      const f=latLonToXYZ(th.from[0],th.from[1],R);
+      const t=latLonToXYZ(th.to[0],th.to[1],R);
+      if(f.z<0&&t.z<0) return;
+      const alpha=f.z<0||t.z<0?0.2:0.6;
+      const mx=(cx+f.x+cx+t.x)/2;
+      const my=(cy-f.y+cy-t.y)/2;
+      const dist=Math.sqrt((t.x-f.x)**2+(t.y-f.y)**2);
+      ctx.beginPath();
+      ctx.moveTo(cx+f.x,cy-f.y);
+      ctx.quadraticCurveTo(mx,my-dist*0.3,cx+t.x,cy-t.y);
+      ctx.strokeStyle=th.color.replace(')',`,${alpha})`).replace('rgb','rgba').replace('#ff2200',`rgba(255,34,0,${alpha})`).replace('#ff9900',`rgba(255,153,0,${alpha})`).replace('#8fbc3a',`rgba(143,188,58,${alpha})`).replace('#44aaff',`rgba(68,170,255,${alpha})`);
+      ctx.lineWidth=1;ctx.stroke();
+
+      // endpoint dots
+      if(f.z>=0){ctx.beginPath();ctx.arc(cx+f.x,cy-f.y,2.5,0,Math.PI*2);ctx.fillStyle=th.color;ctx.fill();}
+      if(t.z>=0){
+        const pulse=0.5+0.5*Math.sin(Date.now()/400);
+        ctx.beginPath();ctx.arc(cx+t.x,cy-t.y,3+pulse*2,0,Math.PI*2);
+        ctx.fillStyle=th.color;ctx.globalAlpha=0.3+0.4*pulse;ctx.fill();ctx.globalAlpha=1;
+        ctx.beginPath();ctx.arc(cx+t.x,cy-t.y,2,0,Math.PI*2);ctx.fillStyle=th.color;ctx.fill();
+      }
+    });
+
+    // Globe border glow
+    const borderGrad=ctx.createRadialGradient(cx,cy,R-2,cx,cy,R+2);
+    borderGrad.addColorStop(0,'rgba(143,188,58,0.3)');
+    borderGrad.addColorStop(1,'rgba(143,188,58,0)');
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle='rgba(143,188,58,0.4)';ctx.lineWidth=1.5;ctx.stroke();
+
+    // Center operator dot (home base - Berlin)
+    const berlin=latLonToXYZ(52.5,13.4,R);
+    if(berlin.z>=0){
+      const pulse=0.5+0.5*Math.sin(Date.now()/300);
+      ctx.beginPath();ctx.arc(cx+berlin.x,cy-berlin.y,4+pulse*3,0,Math.PI*2);
+      ctx.fillStyle=`rgba(143,188,58,${0.2*pulse})`;ctx.fill();
+      ctx.beginPath();ctx.arc(cx+berlin.x,cy-berlin.y,3,0,Math.PI*2);
+      ctx.fillStyle='#c8e86a';ctx.fill();
+    }
+
+    angle+=0.15;
+    requestAnimationFrame(draw);
   }
+  draw();
+})();
 
-  // BOOT SEQUENCE
-  const bootLines = [
-    {t:'ok',  msg:'BIOS v4.2.1 — Tactical Systems Corp. — initialized'},
-    {t:'ok',  msg:'CPU cores: 16 // RAM: 64GB // integrity: verified'},
-    {t:'ok',  msg:'Loading kernel modules... done'},
-    {t:'warn',msg:'Non-standard network adapter detected — forcing compatibility'},
-    {t:'ok',  msg:'Mounting encrypted volumes... [AES-256] success'},
-    {t:'ok',  msg:'Starting firewall daemon... port rules loaded (1,247 rules)'},
-    {t:'ok',  msg:'IDS engine online — signature DB: 94,312 entries'},
-    {t:'warn',msg:'2 nodes offline — failover routing active'},
-    {t:'ok',  msg:'VPN tunnel established — 256-bit handshake confirmed'},
-    {t:'ok',  msg:'Authenticating operator... BENJAMIN SAFI // clearance LVL 3'},
-    {t:'ok',  msg:'Threat feed synced — 14 active alerts queued'},
-    {t:'err', msg:'Anomaly detected in sector 7 — flagging for review'},
-    {t:'ok',  msg:'Dashboard modules loaded — all systems nominal'},
-    {t:'ok',  msg:'TACTOPS ready. Welcome, Benjamin Safi.'},
-  ];
-
-  const bootLinesEl = document.getElementById('bootLines');
-  const bootFill = document.getElementById('bootFill');
-  const bootPct = document.getElementById('bootPct');
-  let lineIdx = 0;
-  const totalLines = bootLines.length;
-
-  function showNextLine() {
-    if (lineIdx >= totalLines) { setTimeout(endBoot, 600); return; }
-    const data = bootLines[lineIdx];
-    const div = document.createElement('div');
-    div.className = 'boot-line ' + data.t;
-    const tagMap = {ok:'[ OK ]', warn:'[WARN]', err:'[FAIL]'};
-    div.innerHTML = '<span class="tag">'+tagMap[data.t]+'</span><span class="msg">'+data.msg+'</span>';
-    bootLinesEl.appendChild(div);
-    requestAnimationFrame(() => { div.style.opacity = '1'; });
-    lineIdx++;
-    const pct = Math.round((lineIdx / totalLines) * 100);
-    bootFill.style.width = pct + '%';
-    bootPct.textContent = pct + '%';
-    const delay = 120 + Math.random()*180 + (data.t !== 'ok' ? 200 : 0);
-    setTimeout(showNextLine, delay);
-  }
-
-  function endBoot() {
-    const screen = document.getElementById('bootScreen');
-    screen.style.transition = 'opacity 0.8s';
-    screen.style.opacity = '0';
-    setTimeout(() => {
-      screen.style.display = 'none';
-      document.getElementById('mainUI').classList.add('visible');
-    }, 800);
-  }
-
-  setTimeout(showNextLine, 400);
+// BOOT
+const bootLines=[
+  {t:'ok',  msg:'BIOS v4.2.1 — TactOps Systems Corp. — initialized'},
+  {t:'ok',  msg:'CPU: 16 cores // RAM: 128GB // GPU: NVIDIA A100 — verified'},
+  {t:'ok',  msg:'Kernel modules loaded — cryptographic subsystem OK'},
+  {t:'warn',msg:'Unusual NIC detected — forcing stealth mode'},
+  {t:'ok',  msg:'Encrypted storage mounted — AES-256-GCM — success'},
+  {t:'ok',  msg:'Firewall daemon started — 1,247 rules active'},
+  {t:'ok',  msg:'IDS engine online — 94,312 threat signatures loaded'},
+  {t:'ok',  msg:'Global satellite link established — 6 continents'},
+  {t:'warn',msg:'2 nodes offline — automatic failover activated'},
+  {t:'ok',  msg:'VPN mesh online — 256-bit Wireguard handshake confirmed'},
+  {t:'ok',  msg:'Globe tracking subsystem — 127 nodes registered'},
+  {t:'ok',  msg:'Radar subsystem — scanning 360° — 5 contacts detected'},
+  {t:'ok',  msg:'Authenticating operator — BENJAMIN SAFI // LVL 5 GLOBAL'},
+  {t:'err', msg:'Anomaly detected — sector 7 — flagged for operator review'},
+  {t:'ok',  msg:'Threat database synced — 14 active global vectors'},
+  {t:'ok',  msg:'All modules online — dashboard ready'},
+  {t:'ok',  msg:'TACTOPS READY. Welcome back, Benjamin Safi.'},
+];
+const bLE=document.getElementById('bootLines');
+const bF=document.getElementById('bootFill');
+const bP=document.getElementById('bootPct');
+let li=0;
+function nextLine(){
+  if(li>=bootLines.length){setTimeout(endBoot,700);return;}
+  const d=bootLines[li];
+  const el=document.createElement('div');el.className='boot-line '+d.t;
+  el.innerHTML='<span class="tag">'+{ok:'[ OK ]',warn:'[WARN]',err:'[FAIL]'}[d.t]+'</span><span class="msg">'+d.msg+'</span>';
+  bLE.appendChild(el);
+  requestAnimationFrame(()=>{el.style.opacity='1';});
+  li++;
+  const pct=Math.round(li/bootLines.length*100);
+  bF.style.width=pct+'%';bP.textContent=pct+'%';
+  setTimeout(nextLine,100+Math.random()*150+(d.t!=='ok'?180:0));
+}
+function endBoot(){
+  const s=document.getElementById('bootScreen');
+  s.style.transition='opacity 0.8s';s.style.opacity='0';
+  setTimeout(()=>{s.style.display='none';document.getElementById('mainUI').classList.add('visible');},800);
+}
+setTimeout(nextLine,500);
 </script>
 </body>
 </html>
