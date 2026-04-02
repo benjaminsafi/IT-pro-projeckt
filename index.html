@@ -62,6 +62,10 @@ body.red-alert .operator-photo{filter:saturate(0.2) sepia(1) hue-rotate(-20deg) 
 .op-label{font-size:8px;letter-spacing:3px;color:#3d5518;text-transform:uppercase}
 .op-name{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:#c8e86a;letter-spacing:3px;text-shadow:0 0 10px rgba(200,232,106,0.4);transition:color 0.3s}
 body.red-alert .op-name{color:#ff9999}
+.op-meta{display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap}
+.meta-item{font-size:8px;letter-spacing:1px;color:#5a7520}
+.meta-key{color:#3d5518;margin-right:3px;font-size:7px;letter-spacing:2px}
+.meta-sep{color:#1a2a0a;font-size:8px}
 .op-role{font-size:9px;color:#5a7520;letter-spacing:2px}
 .op-status{font-size:8px;color:#8fbc3a;letter-spacing:1px;display:flex;align-items:center;gap:4px}
 .op-status::before{content:'';width:5px;height:5px;border-radius:50%;background:#8fbc3a;animation:pulse 1.5s infinite;flex-shrink:0}
@@ -212,9 +216,16 @@ body.red-alert .fw-bar.spike{background:#ff0000;box-shadow:0 0 10px #ff0000}
           <div class="photo-id">ID-BS-0047</div>
         </div>
         <div class="operator-info">
-          <div class="op-label">Classified Operator</div>
+          <div class="op-label">Classified Operator // File #BS-0047</div>
           <div class="op-name">BENJAMIN SAFI</div>
           <div class="op-role">CYBER OPS // CLEARANCE LVL 5 // GLOBAL</div>
+          <div class="op-meta">
+            <span class="meta-item"><span class="meta-key">DOB</span> 19.06.2000</span>
+            <span class="meta-sep">|</span>
+            <span class="meta-item"><span class="meta-key">ORIGIN</span> BAGHLAN, AFG</span>
+            <span class="meta-sep">|</span>
+            <span class="meta-item"><span class="meta-key">BASE</span> BERLIN, DEU</span>
+          </div>
           <div class="op-status" id="opStatus">ACTIVE SESSION</div>
         </div>
       </div>
