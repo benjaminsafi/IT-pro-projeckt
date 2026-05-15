@@ -3,534 +3,1402 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Halle City Guide</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<title>IT Pro – IT-Dienstleistungen Halle & Deutschlandweit</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-:root {
-  --bg: #06060f;
-  --card: #0d0d1f;
-  --border: rgba(255,255,255,0.07);
-  --text: #f0f0ff;
-  --muted: #7070a0;
-  --a: #a78bfa;
-  --b: #38bdf8;
-  --c: #f472b6;
-  --d: #34d399;
-  --e: #fb923c;
-}
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-.blobs { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-.blob { position:absolute; border-radius:50%; filter:blur(100px); opacity:0.12; animation:float 12s ease-in-out infinite; }
-.blob1 { width:500px; height:500px; background:#7c3aed; top:-100px; left:-100px; animation-delay:0s; }
-.blob2 { width:400px; height:400px; background:#0ea5e9; top:30%; right:-80px; animation-delay:-4s; }
-.blob3 { width:350px; height:350px; background:#ec4899; bottom:10%; left:20%; animation-delay:-8s; }
-@keyframes float { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-40px) scale(1.05);} }
+  :root {
+    --bg: #080c10;
+    --bg2: #0d1117;
+    --accent: #00e5ff;
+    --accent2: #0066ff;
+    --green: #00ff88;
+    --text: #c9d1d9;
+    --text-dim: #6e7681;
+    --border: rgba(0,229,255,0.15);
+    --card: rgba(13,17,23,0.8);
+  }
 
-.container { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:0 20px 80px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-.lang-bar { display:flex; justify-content:flex-end; padding:20px 0 0; gap:8px; }
-.lang-btn {
-  font-family:'Space Grotesk',sans-serif; font-size:0.72rem; font-weight:500;
-  letter-spacing:1px; padding:5px 14px; border-radius:20px;
-  border:1px solid var(--border); background:transparent; color:var(--muted);
-  cursor:pointer; transition:all 0.25s;
-}
-.lang-btn.active { background:rgba(167,139,250,0.15); border-color:var(--a); color:var(--a); }
+  html { scroll-behavior: smooth; }
 
-header { text-align:center; padding:60px 0 50px; }
-.badge {
-  display:inline-block; font-family:'Space Grotesk',sans-serif;
-  font-size:0.7rem; font-weight:500; letter-spacing:3px; text-transform:uppercase;
-  background:linear-gradient(135deg,rgba(167,139,250,0.15),rgba(56,189,248,0.15));
-  border:1px solid rgba(167,139,250,0.3); border-radius:20px;
-  padding:6px 18px; color:var(--a); margin-bottom:24px;
-}
-h1 {
-  font-family:'Syne',sans-serif; font-size:clamp(3rem,10vw,6rem); font-weight:800;
-  line-height:0.95;
-  background:linear-gradient(135deg,#a78bfa 0%,#38bdf8 40%,#f472b6 80%);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  margin-bottom:20px; letter-spacing:-2px;
-}
-.tagline { font-size:1rem; color:var(--muted); font-weight:300; max-width:440px; margin:0 auto 36px; line-height:1.7; }
-.stats { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
-.stat {
-  display:flex; align-items:center; gap:6px; font-size:0.8rem; color:var(--muted);
-  background:rgba(255,255,255,0.04); border:1px solid var(--border);
-  border-radius:20px; padding:6px 14px;
-}
-.stat-dot { width:6px; height:6px; border-radius:50%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
 
-.sec-title {
-  font-family:'Space Grotesk',sans-serif; font-size:0.7rem; font-weight:500;
-  letter-spacing:4px; text-transform:uppercase; color:var(--muted);
-  margin-bottom:24px; display:flex; align-items:center; gap:14px;
-}
-.sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-.stops { margin-bottom:60px; }
-.stop {
-  display:grid; grid-template-columns:70px 1fr; gap:0 20px; margin-bottom:6px;
-  opacity:0; transform:translateY(16px); animation:fadeUp 0.5s forwards;
-}
-.stop:nth-child(1){animation-delay:.05s} .stop:nth-child(2){animation-delay:.1s}
-.stop:nth-child(3){animation-delay:.15s} .stop:nth-child(4){animation-delay:.2s}
-.stop:nth-child(5){animation-delay:.25s} .stop:nth-child(6){animation-delay:.3s}
-.stop:nth-child(7){animation-delay:.35s} .stop:nth-child(8){animation-delay:.4s}
-@keyframes fadeUp { to{opacity:1;transform:translateY(0);} }
+  /* SCAN LINE */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scan 6s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+  }
 
-.stop-time-col { display:flex; flex-direction:column; align-items:flex-end; padding-top:22px; gap:6px; }
-.stop-time { font-family:'Space Grotesk',sans-serif; font-size:0.8rem; font-weight:700; color:var(--muted); white-space:nowrap; }
-.stop-line { width:1px; flex:1; min-height:30px; background:var(--border); }
-.stop-body {
-  background:var(--card); border:1px solid var(--border); border-radius:16px;
-  padding:18px 22px; position:relative; overflow:hidden;
-  transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s; cursor:default;
-}
-.stop-body::before {
-  content:''; position:absolute; top:0; left:0; width:3px; height:100%; border-radius:16px 0 0 16px;
-}
-.stop:nth-child(1) .stop-body::before{background:var(--e);}
-.stop:nth-child(2) .stop-body::before{background:var(--a);}
-.stop:nth-child(3) .stop-body::before{background:var(--b);}
-.stop:nth-child(4) .stop-body::before{background:var(--c);}
-.stop:nth-child(5) .stop-body::before{background:var(--d);}
-.stop:nth-child(6) .stop-body::before{background:var(--a);}
-.stop:nth-child(7) .stop-body::before{background:var(--b);}
-.stop:nth-child(8) .stop-body::before{background:var(--e);}
-.stop-body:hover { transform:translateY(-2px); border-color:rgba(255,255,255,0.14); box-shadow:0 8px 40px rgba(0,0,0,0.4); }
+  @keyframes scan {
+    0% { top: -2px; }
+    100% { top: 100%; }
+  }
 
-.stop-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
-.stop-emoji { font-size:1.1rem; }
-.stop-name { font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:700; color:var(--text); flex:1; }
-.stop-chip { font-size:0.65rem; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; padding:3px 10px; border-radius:20px; border:1px solid; }
-.chip-food   { color:var(--e); border-color:rgba(251,146,60,0.3);  background:rgba(251,146,60,0.08); }
-.chip-sight  { color:var(--a); border-color:rgba(167,139,250,0.3); background:rgba(167,139,250,0.08); }
-.chip-museum { color:var(--b); border-color:rgba(56,189,248,0.3);  background:rgba(56,189,248,0.08); }
-.chip-cafe   { color:var(--d); border-color:rgba(52,211,153,0.3);  background:rgba(52,211,153,0.08); }
-.chip-nature { color:var(--c); border-color:rgba(244,114,182,0.3); background:rgba(244,114,182,0.08); }
-.stop-desc { font-size:0.9rem; color:var(--muted); line-height:1.65; }
-.stop-desc strong { color:#ccc; font-weight:600; }
-.stop-warn { margin-top:10px; font-size:0.75rem; color:#fb923c; display:flex; align-items:center; gap:6px; }
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(8,12,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
 
-.map-section { margin-bottom:60px; }
-.map-card {
-  background:linear-gradient(135deg,rgba(167,139,250,0.1),rgba(56,189,248,0.1));
-  border:1px solid rgba(167,139,250,0.25); border-radius:20px; padding:36px; text-align:center;
-}
-.map-card h3 {
-  font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800;
-  background:linear-gradient(135deg,#a78bfa,#38bdf8);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  margin-bottom:10px;
-}
-.map-card p { font-size:0.9rem; color:var(--muted); margin-bottom:28px; line-height:1.6; }
-.btn-map {
-  display:inline-flex; align-items:center; gap:10px;
-  background:linear-gradient(135deg,#7c3aed,#0ea5e9); color:#fff; text-decoration:none;
-  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.9rem;
-  padding:14px 32px; border-radius:50px; transition:all 0.3s;
-  box-shadow:0 4px 30px rgba(124,58,237,0.4);
-}
-.btn-map:hover { transform:translateY(-3px); box-shadow:0 8px 40px rgba(124,58,237,0.6); }
+  .logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #fff;
+  }
 
-.tips-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:60px; }
-.tip { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; transition:border-color 0.25s; }
-.tip:hover { border-color:rgba(255,255,255,0.12); }
-.tip-icon { font-size:1.5rem; margin-bottom:10px; }
-.tip-title { font-family:'Space Grotesk',sans-serif; font-size:0.8rem; font-weight:700; color:var(--text); margin-bottom:6px; }
-.tip-text { font-size:0.82rem; color:var(--muted); line-height:1.6; }
+  .logo span {
+    color: var(--accent);
+  }
 
-footer { border-top:1px solid var(--border); padding-top:30px; text-align:center; margin-bottom:100px; }
-.footer-text { font-size:0.8rem; color:var(--muted); margin-bottom:8px; }
-.footer-link { font-size:0.8rem; color:var(--a); text-decoration:none; transition:opacity 0.2s; }
-.footer-link:hover { opacity:0.7; }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
 
-/* ── CHATBOT ── */
-#chat-fab {
-  position:fixed; bottom:28px; right:28px; z-index:100;
-  width:58px; height:58px; border-radius:50%;
-  background:linear-gradient(135deg,#7c3aed,#0ea5e9);
-  border:none; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 4px 24px rgba(124,58,237,0.5);
-  transition:transform 0.2s, box-shadow 0.2s;
-  font-size:1.4rem;
-}
-#chat-fab:hover { transform:scale(1.08); box-shadow:0 8px 32px rgba(124,58,237,0.7); }
-#chat-fab .fab-badge {
-  position:absolute; top:-4px; right:-4px;
-  background:var(--c); color:#fff;
-  font-size:0.55rem; font-family:'Space Grotesk',sans-serif; font-weight:700;
-  padding:2px 5px; border-radius:10px;
-}
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
 
-#chat-window {
-  position:fixed; bottom:100px; right:28px; z-index:100;
-  width:360px; max-width:calc(100vw - 40px);
-  background:#0d0d1f;
-  border:1px solid rgba(167,139,250,0.3);
-  border-radius:20px;
-  display:flex; flex-direction:column; overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,0.6);
-  transform:scale(0.9) translateY(20px);
-  opacity:0; pointer-events:none;
-  transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  max-height:500px;
-}
-#chat-window.open { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
+  .nav-links a:hover { color: var(--accent); }
 
-.chat-header {
-  display:flex; align-items:center; gap:10px; padding:16px 18px;
-  background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(14,165,233,0.2));
-  border-bottom:1px solid var(--border); flex-shrink:0;
-}
-.chat-header-icon {
-  width:34px; height:34px; border-radius:50%;
-  background:linear-gradient(135deg,#7c3aed,#0ea5e9);
-  display:flex; align-items:center; justify-content:center; font-size:1rem;
-}
-.chat-header-info { flex:1; }
-.chat-header-name { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.85rem; color:var(--text); }
-.chat-header-sub { font-size:0.68rem; color:var(--d); display:flex; align-items:center; gap:4px; }
-.chat-header-sub::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--d); animation:pulse-dot 2s infinite; }
-@keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-.chat-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.2rem; padding:4px; transition:color 0.2s; }
-.chat-close:hover { color:var(--text); }
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    z-index: 2;
+  }
 
-#chat-messages {
-  flex:1; overflow-y:auto; padding:16px;
-  display:flex; flex-direction:column; gap:10px; min-height:200px;
-}
-#chat-messages::-webkit-scrollbar { width:4px; }
-#chat-messages::-webkit-scrollbar-track { background:transparent; }
-#chat-messages::-webkit-scrollbar-thumb { background:rgba(167,139,250,0.3); border-radius:2px; }
+  .hero-content {
+    max-width: 800px;
+  }
 
-.msg { display:flex; gap:8px; animation:msgIn 0.2s ease; }
-@keyframes msgIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
-.msg.user { flex-direction:row-reverse; }
-.msg-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; flex-shrink:0; }
-.msg.ai .msg-avatar { background:linear-gradient(135deg,#7c3aed,#0ea5e9); }
-.msg.user .msg-avatar { background:rgba(255,255,255,0.08); }
-.msg-bubble { max-width:80%; padding:10px 14px; border-radius:14px; font-size:0.85rem; line-height:1.55; }
-.msg.ai .msg-bubble { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text); border-radius:4px 14px 14px 14px; }
-.msg.user .msg-bubble { background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(14,165,233,0.3)); border:1px solid rgba(167,139,250,0.2); color:var(--text); border-radius:14px 4px 14px 14px; }
+  .hero-badge {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.3rem 1rem;
+    letter-spacing: 3px;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.8s ease;
+  }
 
-.typing-indicator { display:flex; gap:4px; align-items:center; padding:8px 4px; }
-.typing-dot { width:6px; height:6px; border-radius:50%; background:var(--muted); animation:typing 1.2s infinite; }
-.typing-dot:nth-child(2){animation-delay:0.2s;} .typing-dot:nth-child(3){animation-delay:0.4s;}
-@keyframes typing { 0%,100%{transform:translateY(0);opacity:0.4;} 50%{transform:translateY(-4px);opacity:1;} }
+  .hero h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
 
-.chat-suggestions { display:flex; gap:6px; padding:0 16px 10px; flex-wrap:wrap; flex-shrink:0; }
-.suggestion-btn {
-  font-size:0.72rem; color:var(--a);
-  background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.2);
-  border-radius:20px; padding:5px 12px; cursor:pointer;
-  font-family:'Inter',sans-serif; transition:all 0.2s; white-space:nowrap;
-}
-.suggestion-btn:hover { background:rgba(167,139,250,0.18); border-color:rgba(167,139,250,0.4); }
+  .hero h1 .accent { color: var(--accent); }
 
-.chat-input-row { display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--border); flex-shrink:0; }
-#chat-input {
-  flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border);
-  border-radius:12px; padding:10px 14px; color:var(--text);
-  font-family:'Inter',sans-serif; font-size:0.85rem; outline:none;
-  transition:border-color 0.2s; resize:none;
-}
-#chat-input:focus { border-color:rgba(167,139,250,0.4); }
-#chat-input::placeholder { color:var(--muted); }
-#chat-send {
-  width:38px; height:38px; border-radius:10px;
-  background:linear-gradient(135deg,#7c3aed,#0ea5e9);
-  border:none; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  transition:opacity 0.2s, transform 0.2s; flex-shrink:0; align-self:flex-end;
-}
-#chat-send:hover { opacity:0.85; transform:scale(1.05); }
-#chat-send:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 560px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
 
-@media(max-width:560px){
-  .stop{grid-template-columns:55px 1fr;gap:0 12px;}
-  h1{letter-spacing:-1px;}
-  .map-card{padding:24px 20px;}
-  #chat-window{right:16px;bottom:90px;width:calc(100vw - 32px);}
-  #chat-fab{right:16px;bottom:20px;}
-}
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s ease 0.6s both;
+  }
 
-body.lang-en .de{display:none;}
-body.lang-de .en{display:none;}
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    padding: 0.85rem 2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--accent);
+    padding: 0.85rem 2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(0,229,255,0.1);
+    transform: translateY(-2px);
+  }
+
+  /* STATS */
+  .stats {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 2;
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--text-dim);
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+
+  /* SERVICES GRID */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    transition: border-color 0.3s;
+    cursor: pointer;
+  }
+
+  .service-card.open {
+    border-color: rgba(0,229,255,0.5);
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: transparent;
+    transition: background 0.3s;
+  }
+
+  .service-card.open::before { background: var(--accent); }
+
+  .service-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    user-select: none;
+  }
+
+  .service-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+
+  .service-card h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    flex: 1;
+  }
+
+  .service-chevron {
+    color: var(--accent);
+    font-size: 0.8rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .service-card.open .service-chevron {
+    transform: rotate(180deg);
+  }
+
+  .service-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+    overflow: hidden;
+  }
+
+  .service-card.open .service-body {
+    grid-template-rows: 1fr;
+  }
+
+  .service-body-inner {
+    overflow: hidden;
+    min-height: 0;
+    padding: 0 1.5rem;
+    transition: padding 0.35s ease;
+  }
+
+  .service-card.open .service-body-inner {
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .service-card p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .service-price {
+    margin-top: 0.75rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  /* WHY US */
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .why-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .why-card:hover {
+    border-color: rgba(0,255,136,0.3);
+    transform: translateY(-3px);
+  }
+
+  .why-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .why-card h4 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .why-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* CONTACT */
+  .contact-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .contact-info h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .contact-info p {
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+  }
+
+  .contact-item:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .contact-item-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+  }
+
+  .contact-item-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+  }
+
+  .contact-item-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 0.2rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* FORM */
+  .contact-form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    background: rgba(0,229,255,0.03);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: var(--accent);
+  }
+
+  .form-group select option {
+    background: var(--bg2);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 1rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .submit-btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+  }
+
+  /* TERMINAL BLOCK */
+  .terminal {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin: 3rem 0;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green);
+    line-height: 2;
+  }
+
+  .terminal .prompt { color: var(--accent); }
+  .terminal .comment { color: var(--text-dim); }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  footer span { color: var(--accent); }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* WHATSAPP FLOAT */
+  .whatsapp-float {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 200;
+    background: #25d366;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); }
+    50% { box-shadow: 0 4px 40px rgba(37,211,102,0.7); }
+  }
+
+  /* CUSTOM CURSOR */
+  * { cursor: none; }
+
+  .cursor-dot {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .cursor-ring {
+    position: fixed;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.25s ease, width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
+  }
+
+  .cursor-ring.hover {
+    width: 60px;
+    height: 60px;
+    border-color: #ff0080;
+    background: rgba(255,0,128,0.05);
+  }
+
+  @media (max-width: 768px) {
+    * { cursor: auto; }
+    .cursor-dot, .cursor-ring { display: none; }
+  }
+
+  /* 3D GLOBE CONTAINER */
+  .globe-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(85vw, 85vh, 650px);
+    height: min(85vw, 85vh, 650px);
+    z-index: 0;
+    opacity: 0.5;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .globe-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  /* LIVE STATS */
+  .live-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+
+  .live-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .live-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scanStat 3s linear infinite;
+  }
+
+  @keyframes scanStat {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  .live-stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse-dot 1.5s infinite;
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .live-stat-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .live-stat-sub {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 0.25rem;
+  }
+
+  /* 3D TILT CARDS */
+  .service-card {
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* MATRIX RAIN */
+  #matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  /* GLITCH EFFECT */
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .glitch::before {
+    color: #ff0080;
+    z-index: -1;
+    animation: glitch-1 3s infinite linear alternate-reverse;
+  }
+
+  .glitch::after {
+    color: var(--accent);
+    z-index: -2;
+    animation: glitch-2 2.5s infinite linear alternate-reverse;
+  }
+
+  @keyframes glitch-1 {
+    0%, 90%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 1px); }
+    40% { transform: translate(-1px, -1px); }
+    60% { transform: translate(1px, 2px); }
+    80% { transform: translate(2px, -1px); }
+  }
+
+  @keyframes glitch-2 {
+    0%, 90%, 100% { transform: translate(0); }
+    20% { transform: translate(2px, -1px); }
+    40% { transform: translate(1px, 1px); }
+    60% { transform: translate(-1px, -2px); }
+    80% { transform: translate(-2px, 1px); }
+  }
+
+  /* ABOUT SECTION */
+  .about-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .about-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(15px 0%, 100% 0%, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0% 100%, 0% 15px);
+  }
+
+  .about-img::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--bg2);
+    clip-path: polygon(13px 0%, 100% 0%, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0% 100%, 0% 13px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .about-img-icon {
+    position: relative;
+    z-index: 2;
+    font-size: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .about-text h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .about-text p {
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .skill-tag {
+    background: rgba(0,229,255,0.08);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    padding: 0.4rem 0.9rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 768px) {
+    .about-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+    .about-img { max-width: 200px; margin: 0 auto; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .contact-wrapper { grid-template-columns: 1fr; }
+    .stats { gap: 2rem; }
+  }
 </style>
 </head>
-<body class="lang-de">
+<body>
 
-<div class="blobs">
-  <div class="blob blob1"></div>
-  <div class="blob blob2"></div>
-  <div class="blob blob3"></div>
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<canvas id="matrix-canvas"></canvas>
+
+
+
+<!-- NAV -->
+<nav>
+  <div class="logo">IT<span>PRO</span></div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="globe-container" id="globe"></div>
+  <div class="hero-content">
+    <div class="hero-badge">// IT-DIENSTLEISTUNGEN · HALLE & DEUTSCHLANDWEIT</div>
+    <h1><span class="glitch" data-text="Deine digitale">Deine digitale</span><br><span class="accent glitch" data-text="Sicherheit.">Sicherheit.</span><br><span class="glitch" data-text="Unser Job.">Unser Job.</span></h1>
+    <p>Von sicherer Kommunikation über Netzwerk-Setup bis zu deinem nächsten Laptop — wir lösen deine IT-Probleme schnell, zuverlässig und zu fairen Preisen.</p>
+
+  </div>
 </div>
 
-<div class="container">
-  <div class="lang-bar">
-    <button class="lang-btn active" onclick="setLang('de')">DE</button>
-    <button class="lang-btn" onclick="setLang('en')">EN</button>
-  </div>
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">// LIVE STATUS</div>
+  <h2 class="section-title">System Online</h2>
 
-  <header>
-    <div class="badge">📍 Halle (Saale), Germany</div>
-    <h1>City Guide</h1>
-    <p class="tagline de">Ein kompletter Tagesplan für Halle (Saale) — von Frühstück bis Abendessen, alles zu Fuß.</p>
-    <p class="tagline en">A full day itinerary for Halle (Saale) — breakfast to dinner, entirely on foot.</p>
-    <div class="stats">
-      <div class="stat"><span class="stat-dot" style="background:#a78bfa"></span>8 Stops</div>
-      <div class="stat"><span class="stat-dot" style="background:#38bdf8"></span>~10 Stunden</div>
-      <div class="stat"><span class="stat-dot" style="background:#f472b6"></span>100% Walking</div>
-      <div class="stat"><span class="stat-dot" style="background:#34d399"></span>Altstadt</div>
+  <div class="live-stats">
+    <div class="live-stat fade-in">
+      <div class="live-stat-label"><span class="live-dot"></span>Server Uptime</div>
+      <div class="live-stat-value" data-target="99.9" data-suffix="%">0%</div>
+      <div class="live-stat-sub">Letzte 30 Tage</div>
     </div>
-  </header>
-
-  <div class="sec-title de">Tagesroute</div>
-  <div class="sec-title en">Day Route</div>
-
-  <div class="stops">
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">09:00</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">🍳</span><span class="stop-name">The Shabby</span><span class="stop-chip chip-food">Food</span></div>
-        <p class="stop-desc de">Halles beliebtestes Frühstückslokal. <strong>Eggs Benedict oder Pancakes</strong> — beides ein Muss. Am Wochenende Reservierung empfohlen.</p>
-        <p class="stop-desc en">Halle's most loved breakfast spot. <strong>Eggs Benedict or pancakes</strong> — both a must. Book ahead on weekends.</p>
-        <div class="stop-warn de">⚠ Mittwoch & Donnerstag geschlossen</div>
-        <div class="stop-warn en">⚠ Closed Wednesday & Thursday</div>
-      </div>
+    <div class="live-stat fade-in">
+      <div class="live-stat-label"><span class="live-dot"></span>Reaktionszeit</div>
+      <div class="live-stat-value" data-target="24" data-suffix="h">0h</div>
+      <div class="live-stat-sub">Max. Antwortzeit</div>
     </div>
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">10:30</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">⛪</span><span class="stop-name">Marktkirche</span><span class="stop-chip chip-sight">Sehenswürdigkeit</span></div>
-        <p class="stop-desc de">Die ikonische Vierturmkirche der Altstadt. <strong>Luther predigte hier.</strong> Dachaufstieg für Panoramablick — kostenlose Orgelkonzerte.</p>
-        <p class="stop-desc en">The iconic four-tower church. <strong>Luther preached here.</strong> Climb to the roof for panoramic views — free organ concerts.</p>
-      </div>
+    <div class="live-stat fade-in">
+      <div class="live-stat-label"><span class="live-dot"></span>Zufriedenheit</div>
+      <div class="live-stat-value" data-target="100" data-suffix="%">0%</div>
+      <div class="live-stat-sub">Kundenbewertung</div>
     </div>
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">11:30</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">🗼</span><span class="stop-name">Roter Turm</span><span class="stop-chip chip-sight">Sehenswürdigkeit</span></div>
-        <p class="stop-desc de">Halles bekanntestes Wahrzeichen. <strong>Kurzer Stopp, perfekte Fotos.</strong> Das Glockenspiel klingt zur vollen Stunde.</p>
-        <p class="stop-desc en">Halle's most iconic landmark. <strong>Quick stop, perfect photos.</strong> The carillon rings on the hour.</p>
-      </div>
-    </div>
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">12:00</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">🎸</span><span class="stop-name">Beatles Museum</span><span class="stop-chip chip-museum">Museum</span></div>
-        <p class="stop-desc de">Überraschend groß und unterhaltsam. <strong>Einzigartiges Museum</strong> am Alten Markt — innen viel größer als erwartet.</p>
-        <p class="stop-desc en">Surprisingly large and fun. A <strong>unique museum</strong> at Alter Markt — much bigger inside than expected.</p>
-        <div class="stop-warn de">⚠ Montags geschlossen</div>
-        <div class="stop-warn en">⚠ Closed Monday</div>
-      </div>
-    </div>
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">13:30</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">☕</span><span class="stop-name">NEKO-Café</span><span class="stop-chip chip-cafe">Café</span></div>
-        <p class="stop-desc de">Japanisch inspiriertes Café mit <strong>herausragendem Kaffee und hausgemachten Kuchen.</strong> Lotus-Cheesecake unbedingt probieren!</p>
-        <p class="stop-desc en">Japanese-inspired café with <strong>exceptional coffee and homemade cakes.</strong> The lotus cheesecake is unmissable!</p>
-        <div class="stop-warn de">⚠ Montag & Sonntag geschlossen</div>
-        <div class="stop-warn en">⚠ Closed Monday & Sunday</div>
-      </div>
-    </div>
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">14:30</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">🏰</span><span class="stop-name">Kunstmuseum Moritzburg</span><span class="stop-chip chip-museum">Museum</span></div>
-        <p class="stop-desc de">In einer <strong>mittelalterlichen Festung.</strong> Innenhof kostenlos. Große Kunstsammlung, 3D-Tour. <strong>Eintritt frei für Studenten!</strong></p>
-        <p class="stop-desc en">In a <strong>medieval fortress.</strong> Courtyard free. Great art collection, 3D tour. <strong>Free for students!</strong></p>
-        <div class="stop-warn de">⚠ Mittwochs geschlossen</div>
-        <div class="stop-warn en">⚠ Closed Wednesday</div>
-      </div>
-    </div>
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">16:30</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">🌿</span><span class="stop-name">Gimritzer Park</span><span class="stop-chip chip-nature">Natur</span></div>
-        <p class="stop-desc de">Verstecktes Juwel an der Saale. <strong>Perfekt zum Entspannen</strong> — kaum Touristen, viel Ruhe.</p>
-        <p class="stop-desc en">Hidden gem on the Saale river. <strong>Perfect to unwind</strong> — barely any tourists, very peaceful.</p>
-      </div>
-    </div>
-    <div class="stop">
-      <div class="stop-time-col"><span class="stop-time">18:30</span><div class="stop-line"></div></div>
-      <div class="stop-body">
-        <div class="stop-top"><span class="stop-emoji">🍝</span><span class="stop-name">Verliebt in Giulia</span><span class="stop-chip chip-food">Dinner</span></div>
-        <p class="stop-desc de">Eines der bestbewerteten Restaurants in Halle. <strong>Kreative italienische Pasta</strong> — Formaggio di Capra (Ziegenkäse, Feige, Speck) ist ein Muss.</p>
-        <p class="stop-desc en">One of Halle's top-rated restaurants. <strong>Creative Italian pasta fusion</strong> — try Formaggio di Capra (goat cheese, fig, bacon).</p>
-      </div>
+    <div class="live-stat fade-in">
+      <div class="live-stat-label"><span class="live-dot"></span>Erfahrung</div>
+      <div class="live-stat-value" data-target="3" data-suffix="+ J.">0</div>
+      <div class="live-stat-sub">Im IT-Bereich</div>
     </div>
   </div>
 
-  <div class="map-section">
-    <div class="map-card">
-      <h3 class="de">Route auf Google Maps</h3>
-      <h3 class="en">Open in Google Maps</h3>
-      <p class="de">Alle 8 Stops als Walking-Route — einfach öffnen und loslaufen.</p>
-      <p class="en">All 8 stops as a walking route — just open and go.</p>
-      <a class="btn-map" href="https://www.google.com/maps/dir/The+Shabby,+Harz+1,+06108+Halle+(Saale)/Marktkirche+Unser+Lieben+Frauen,+An+der+Marienkirche+2,+06108+Halle+(Saale)/Roter+Turm,+Altstadt,+06108+Halle+(Saale)/Beatles+Museum,+Alter+Markt+12,+06108+Halle+(Saale)/NEKO-Caf%C3%A9,+Joliot-Curie-Platz+1,+06108+Halle+(Saale)/Kunstmuseum+Moritzburg,+Friedemann-Bach-Platz+5,+06108+Halle+(Saale)/Gimritzer+Park,+Pei%C3%9Fnitzinsel,+06108+Halle+(Saale)/Verliebt+in+Giulia,+M%C3%BChlweg+29,+06114+Halle+(Saale)/@51.486,11.962,14z/data=!3m1!4b1!4m50!4m49!1m5!1m1!1s0x47a6755bc4a6b66b:0xba6bd3c3fb5b4b4a!2m2!1d11.9674514!2d51.4881165!1m5!1m1!1s0x47a64d4dec053d4d:0xf5b0d619c8b696c9!2m2!1d11.9682208!2d51.482594!1m5!1m1!1s0x47a64d491de7d711:0x87d39dc04fd97b6f!2m2!1d11.9693282!2d51.4829783!1m5!1m1!1s0x47a64d4e9c4e2b2f:0x85f27fee45fb6beb!2m2!1d11.96848!2d51.48029!1m5!1m1!1s0x47a64d934934c09b:0xecc4bfbbf3bc4eec!2m2!1d11.9720961!2d51.4855757!1m5!1m1!1s0x47a64d1fd7d3d1d1:0xb07d3f0f3f0f3f0f!2m2!1d11.9636973!2d51.486463!1m5!1m1!1s0x47a6799de1bbfdbb:0xe56a5be9d6ad7ae6!2m2!1d11.9507651!2d51.4867906!1m5!1m1!1s0x47a674142b0ccd2b:0x232b5d0a0ace98a2!2m2!1d11.9686103!2d51.4940078!3e2" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span class="de">Route öffnen →</span>
-        <span class="en">Open Route →</span>
+  <div class="section-label" style="margin-top:4rem;">// LEISTUNGEN</div>
+  <h2 class="section-title">Was wir für dich tun</h2>
+  <p class="section-sub">Alles rund um IT — professionell, schnell und verständlich erklärt. Kein Fachjargon, keine versteckten Kosten.</p>
+
+  <div class="services-grid">
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">🔒</div>
+        <h3>Digitale Sicherheit</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Wir sichern deine Kommunikation, Accounts und Daten ab. Sichere E-Mails, VPN-Einrichtung, Antivirus-Schutz und Beratung zu sicheren Passwörtern.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">💻</div>
+        <h3>Laptop & PC — Verkauf & Setup</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Du brauchst einen zuverlässigen Laptop? Wir besorgen ihn, installieren Windows mit Lizenz, richten alles ein und übergeben ihn fix und fertig.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">🪟</div>
+        <h3>Windows Installation & Optimierung</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Saubere Windows-Neuinstallation mit originaler Lizenz, alle Treiber, Updates und Programme — dein System läuft wieder wie neu.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">🌐</div>
+        <h3>Netzwerk & WLAN Einrichtung</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Router konfigurieren, WLAN optimieren, Gastnetzwerke einrichten, Netzwerksicherheit verbessern — für Zuhause und kleine Betriebe.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">🖨️</div>
+        <h3>Drucker, NAS & Smart Home</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Drucker einrichten, Netzwerkspeicher (NAS) installieren, Smart-Home-Geräte verbinden — wir bringen alles zum Laufen.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">💾</div>
+        <h3>Datensicherung & Backup</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Deine Fotos, Dokumente und Daten sind unbezahlbar. Wir richten automatische Backups ein, damit du nie wieder etwas verlierst.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">🏢</div>
+        <h3>IT für kleine Unternehmen</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Server-Setup, Active Directory, VPN für Mitarbeiter, IT-Infrastruktur planen und umsetzen — professionelle IT für deinen Betrieb.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">🔧</div>
+        <h3>PC-Reparatur & Diagnose</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Langsamer PC, Bluescreens, Viren oder Hardware-Probleme? Wir diagnostizieren das Problem und reparieren es schnell und günstig.</p>
+      </div></div>
+    </div>
+
+    <div class="service-card fade-in" onclick="toggleCard(this)">
+      <div class="service-header">
+        <div class="service-icon">📱</div>
+        <h3>Smartphone & Tablet Setup</h3>
+        <div class="service-chevron">▼</div>
+      </div>
+      <div class="service-body"><div class="service-body-inner">
+        <p>Neues Gerät einrichten, Daten übertragen, Apps installieren und Sicherheitseinstellungen konfigurieren — für Android und iOS.</p>
+      </div></div>
+    </div>
+
+  </div>
+
+
+</section>
+
+<div class="divider"></div>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="section-label">// WARUM IT PRO</div>
+  <h2 class="section-title">Dein lokaler IT-Partner</h2>
+  <p class="section-sub">Kein Callcenter, keine langen Wartezeiten. Du erreichst uns direkt — auf Deutsch, Englisch, Dari oder Farsi. Vor Ort in Halle oder remote deutschlandweit.</p>
+
+  <div class="why-grid">
+    <div class="why-card fade-in">
+      <div class="why-icon">⚡</div>
+      <h4>Schnell</h4>
+      <p>Keine langen Wartezeiten. Wir reagieren innerhalb von 24 Stunden und lösen dein Problem so schnell wie möglich.</p>
+    </div>
+    <div class="why-card fade-in">
+      <div class="why-icon">💰</div>
+      <h4>Fair & Transparent</h4>
+      <p>Klare Preise, keine versteckten Kosten. Du weißt vorher genau, was du zahlst.</p>
+    </div>
+    <div class="why-card fade-in">
+      <div class="why-icon">🤝</div>
+      <h4>Vertrauenswürdig</h4>
+      <p>Persönlicher Service aus der Region. Kein anonymes Unternehmen — du weißt, mit wem du es zu tun hast.</p>
+    </div>
+    <div class="why-card fade-in">
+      <div class="why-icon">🌍</div>
+      <h4>Mehrsprachig</h4>
+      <p>Wir sprechen Deutsch, Englisch, Dari und Farsi — damit du alles verstehst und dich wohl fühlst.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-wrapper">
+    <div class="about-img fade-in">
+      <div class="about-img-icon">👨‍💻</div>
+    </div>
+    <div class="about-text fade-in">
+      <div class="section-label">// ÜBER MICH</div>
+      <h2>Benjamin Safi</h2>
+      <p>IT-Spezialist mit Fokus auf Systemintegration und Cybersicherheit. Ich helfe Privatpersonen und kleinen Unternehmen dabei, ihre digitale Welt sicher, schnell und zuverlässig zu gestalten.</p>
+      <p>Ob bei dir zu Hause in Halle oder remote irgendwo in Deutschland — ich bringe deine IT zum Laufen. Auf Deutsch, Englisch, Dari oder Farsi.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">Systemintegration</span>
+        <span class="skill-tag">Cybersecurity</span>
+        <span class="skill-tag">Linux</span>
+        <span class="skill-tag">Windows Server</span>
+        <span class="skill-tag">Netzwerk</span>
+        <span class="skill-tag">Pentesting</span>
+        <span class="skill-tag">VPN</span>
+        <span class="skill-tag">Backup</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrapper">
+    <div class="contact-info fade-in">
+      <div class="section-label">// KONTAKT</div>
+      <h2 class="section-title">Schreib uns jetzt</h2>
+      <p>Hast du eine Frage oder brauchst du direkt Hilfe? Melde dich einfach — wir antworten schnell und unkompliziert.</p>
+
+      <a href="https://wa.me/4901795224074" class="contact-item" target="_blank">
+        <div class="contact-item-icon">💬</div>
+        <div>
+          <div class="contact-item-label">WhatsApp</div>
+          <div class="contact-item-text">+49 179 522 4074</div>
+        </div>
       </a>
+
+      <a href="tel:+4901795224074" class="contact-item">
+        <div class="contact-item-icon">📞</div>
+        <div>
+          <div class="contact-item-label">Telefon</div>
+          <div class="contact-item-text">+49 179 522 4074</div>
+        </div>
+      </a>
+
+      <a href="mailto:benjamin@ITPro.de" class="contact-item">
+        <div class="contact-item-icon">✉️</div>
+        <div>
+          <div class="contact-item-label">E-Mail</div>
+          <div class="contact-item-text">benjamin@ITPro.de</div>
+        </div>
+      </a>
+
+      <div class="contact-item" style="cursor:default;">
+        <div class="contact-item-icon">📍</div>
+        <div>
+          <div class="contact-item-label">Standort</div>
+          <div class="contact-item-text">Halle (Saale) & Deutschlandweit</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-form fade-in">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" placeholder="Dein Name">
+      </div>
+      <div class="form-group">
+        <label>Telefon / WhatsApp</label>
+        <input type="tel" placeholder="+49 ...">
+      </div>
+      <div class="form-group">
+        <label>Leistung</label>
+        <select>
+          <option value="">Bitte wählen...</option>
+          <option>Laptop / PC kaufen & einrichten</option>
+          <option>Windows Installation</option>
+          <option>Netzwerk & WLAN</option>
+          <option>Digitale Sicherheit</option>
+          <option>PC-Reparatur</option>
+          <option>Datensicherung</option>
+          <option>IT für Unternehmen</option>
+          <option>Sonstiges</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nachricht</label>
+        <textarea placeholder="Beschreibe kurz dein Anliegen..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="sendWhatsApp()">Senden</button>
     </div>
   </div>
+</section>
 
-  <div class="sec-title de">Insider-Tipps</div>
-  <div class="sec-title en">Insider Tips</div>
-  <div class="tips-grid">
-    <div class="tip"><div class="tip-icon">🚶</div><div class="tip-title de">Alles walkable</div><div class="tip-title en">All walkable</div><div class="tip-text de">Alle 8 Stops im ~3 km Radius.</div><div class="tip-text en">All 8 stops within ~3 km.</div></div>
-    <div class="tip"><div class="tip-icon">📅</div><div class="tip-title de">Bester Tag</div><div class="tip-title en">Best day</div><div class="tip-text de">Di, Fr oder Sa — alle geöffnet.</div><div class="tip-text en">Tue, Fri or Sat — all open.</div></div>
-    <div class="tip"><div class="tip-icon">🎓</div><div class="tip-title de">Studentenrabatt</div><div class="tip-title en">Student discount</div><div class="tip-text de">Moritzburg kostenlos für Studenten.</div><div class="tip-text en">Moritzburg free for students.</div></div>
-    <div class="tip"><div class="tip-icon">🎵</div><div class="tip-title de">Orgelkonzert</div><div class="tip-title en">Organ concert</div><div class="tip-text de">Marktkirche: kostenlose 30-Min-Konzerte.</div><div class="tip-text en">Marktkirche: free 30-min concerts.</div></div>
-  </div>
-
-  <footer>
-    <p class="footer-text de">Mit ❤ für Halle (Saale) gemacht</p>
-    <p class="footer-text en">Made with ❤ for Halle (Saale)</p>
-    <a href="https://benjaminsafi.de" class="footer-link" target="_blank">benjaminsafi.de</a>
-  </footer>
-</div>
-
-<!-- CHATBOT -->
-<button id="chat-fab" onclick="toggleChat()">
-  🤖
-  <span class="fab-badge">AI</span>
-</button>
-
-<div id="chat-window">
-  <div class="chat-header">
-    <div class="chat-header-icon">🤖</div>
-    <div class="chat-header-info">
-      <div class="chat-header-name">Halle Guide AI</div>
-      <div class="chat-header-sub">Online · Powered by Claude</div>
-    </div>
-    <button class="chat-close" onclick="toggleChat()">✕</button>
-  </div>
-  <div id="chat-messages"></div>
-  <div class="chat-suggestions" id="suggestions">
-    <button class="suggestion-btn de" onclick="sendSuggestion(this)">Was kann ich heute machen?</button>
-    <button class="suggestion-btn en" onclick="sendSuggestion(this)" style="display:none">What can I do today?</button>
-    <button class="suggestion-btn de" onclick="sendSuggestion(this)">Vegane Optionen?</button>
-    <button class="suggestion-btn en" onclick="sendSuggestion(this)" style="display:none">Vegan options?</button>
-    <button class="suggestion-btn de" onclick="sendSuggestion(this)">Wie lange dauert alles?</button>
-    <button class="suggestion-btn en" onclick="sendSuggestion(this)" style="display:none">How long does it take?</button>
-  </div>
-  <div class="chat-input-row">
-    <textarea id="chat-input" rows="1" placeholder="Frag mich über Halle... / Ask about Halle..." onkeydown="handleKey(event)"></textarea>
-    <button id="chat-send" onclick="sendMessage()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
-  </div>
-</div>
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span>IT PRO</span> · IT-Dienstleistungen · Halle & Deutschlandweit · <a href="mailto:benjamin@ITPro.de" style="color:var(--accent); text-decoration:none;">benjamin@ITPro.de</a></p>
+</footer>
 
 <script>
-const SYSTEM_PROMPT = `Du bist ein freundlicher AI-Reiseführer für Halle (Saale), Deutschland.
-Du kennst alle Details des folgenden Tagesplans:
-1. 09:00 - The Shabby (Frühstück) - Harz 1. Eggs Benedict, Pancakes. Geschlossen Mi+Do.
-2. 10:30 - Marktkirche - Luther predigte hier, Dachaufstieg, kostenlose Orgelkonzerte.
-3. 11:30 - Roter Turm - Wahrzeichen, Glockenspiel zur vollen Stunde.
-4. 12:00 - Beatles Museum - Alter Markt 12. Montags geschlossen.
-5. 13:30 - NEKO-Café - Joliot-Curie-Platz 1. Lotus-Cheesecake. Mo+So geschlossen.
-6. 14:30 - Kunstmuseum Moritzburg - mittelalterliche Festung, kostenlos für Studenten, Mi geschlossen.
-7. 16:30 - Gimritzer Park - Saale-Ufer, ruhig, kaum Touristen.
-8. 18:30 - Verliebt in Giulia - Mühlweg 29. Pasta-Fusion, Formaggio di Capra empfohlen.
-Antworte auf Deutsch wenn auf Deutsch gefragt, auf Englisch wenn auf Englisch gefragt.
-Sei kurz, freundlich und hilfreich. Maximal 3-4 Sätze.`;
+  // CUSTOM CURSOR
+  const cursorDot = document.querySelector('.cursor-dot');
+  const cursorRing = document.querySelector('.cursor-ring');
 
-let currentLang = 'de';
-let chatOpen = false;
-let messages = [];
-let initialized = false;
+  document.addEventListener('mousemove', (e) => {
+    cursorDot.style.left = e.clientX + 'px';
+    cursorDot.style.top = e.clientY + 'px';
+    cursorRing.style.left = e.clientX + 'px';
+    cursorRing.style.top = e.clientY + 'px';
+  });
 
-function setLang(lang) {
-  document.body.className = 'lang-' + lang;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.lang-btn[onclick*="' + lang + '"]').classList.add('active');
-  document.querySelectorAll('.suggestion-btn.de').forEach(b => b.style.display = lang === 'de' ? '' : 'none');
-  document.querySelectorAll('.suggestion-btn.en').forEach(b => b.style.display = lang === 'en' ? '' : 'none');
-  currentLang = lang;
-}
+  document.querySelectorAll('a, button, .service-card, input, textarea, select').forEach(el => {
+    el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+  });
 
-function toggleChat() {
-  chatOpen = !chatOpen;
-  document.getElementById('chat-window').classList.toggle('open', chatOpen);
-  if (chatOpen && !initialized) {
-    initialized = true;
-    addMessage('ai', currentLang === 'de'
-      ? 'Hallo! 👋 Ich bin dein KI-Reiseführer für Halle. Wie kann ich dir helfen?'
-      : 'Hello! 👋 I\'m your AI guide for Halle. How can I help you?');
-  }
-}
+  // 3D GLOBE WITH THREE.JS
+  {
+    const globeContainer = document.getElementById('globe');
+    const getSize = () => Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9, 700);
+    let size = getSize();
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(size, size);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    globeContainer.appendChild(renderer.domElement);
 
-function addMessage(role, text) {
-  const c = document.getElementById('chat-messages');
-  const d = document.createElement('div');
-  d.className = 'msg ' + role;
-  d.innerHTML = `<div class="msg-avatar">${role==='ai'?'🤖':'👤'}</div><div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>`;
-  c.appendChild(d);
-  c.scrollTop = c.scrollHeight;
-  if (role === 'user') document.getElementById('suggestions').style.display = 'none';
-}
-
-function showTyping() {
-  const c = document.getElementById('chat-messages');
-  const d = document.createElement('div');
-  d.className = 'msg ai'; d.id = 'typing-msg';
-  d.innerHTML = `<div class="msg-avatar">🤖</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
-  c.appendChild(d); c.scrollTop = c.scrollHeight;
-}
-function removeTyping() { const t = document.getElementById('typing-msg'); if(t) t.remove(); }
-
-async function sendMessage(text) {
-  const input = document.getElementById('chat-input');
-  const userText = text || input.value.trim();
-  if (!userText) return;
-  input.value = '';
-  addMessage('user', userText);
-  messages.push({ role: 'user', content: userText });
-
-  const btn = document.getElementById('chat-send');
-  btn.disabled = true;
-  showTyping();
-
-  try {
-    // Calls the Netlify function — API key stays on server
-    const res = await fetch('/.netlify/functions/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ system: SYSTEM_PROMPT, messages })
+    // Wireframe sphere
+    const geometry = new THREE.SphereGeometry(2, 32, 32);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x00e5ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5
     });
-    const data = await res.json();
-    removeTyping();
-    if (data.error) {
-      addMessage('ai', '❌ Fehler: ' + data.error.message);
-    } else {
-      const reply = data.content[0].text;
-      messages.push({ role: 'assistant', content: reply });
-      addMessage('ai', reply);
-    }
-  } catch(e) {
-    removeTyping();
-    addMessage('ai', currentLang === 'de' ? '❌ Verbindungsfehler. Bitte erneut versuchen.' : '❌ Connection error. Please try again.');
-  }
-  btn.disabled = false;
-}
+    const sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
 
-function sendSuggestion(btn) { sendMessage(btn.textContent.trim()); }
-function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+    // Inner solid sphere
+    const innerGeom = new THREE.SphereGeometry(1.95, 32, 32);
+    const innerMat = new THREE.MeshBasicMaterial({
+      color: 0x001a2e,
+      transparent: true,
+      opacity: 0.4
+    });
+    const innerSphere = new THREE.Mesh(innerGeom, innerMat);
+    scene.add(innerSphere);
+
+    // Dots on surface
+    const dotsGeometry = new THREE.BufferGeometry();
+    const dotsCount = 200;
+    const positions = new Float32Array(dotsCount * 3);
+    for (let i = 0; i < dotsCount; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 2.05;
+      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = r * Math.cos(phi);
+    }
+    dotsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const dotsMaterial = new THREE.PointsMaterial({
+      color: 0x00e5ff,
+      size: 0.05,
+      transparent: true,
+      opacity: 0.8
+    });
+    const dots = new THREE.Points(dotsGeometry, dotsMaterial);
+    scene.add(dots);
+
+    camera.position.z = 5.2;
+
+    function animateGlobe() {
+      requestAnimationFrame(animateGlobe);
+      sphere.rotation.y += 0.003;
+      sphere.rotation.x += 0.001;
+      dots.rotation.y += 0.003;
+      dots.rotation.x += 0.001;
+      innerSphere.rotation.y += 0.003;
+      renderer.render(scene, camera);
+    }
+    animateGlobe();
+
+    window.addEventListener('resize', () => {
+      size = getSize();
+      renderer.setSize(size, size);
+    });
+  }
+
+  // 3D TILT ON CARDS
+  document.querySelectorAll('.service-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / 20;
+      const rotateY = (centerX - x) / 20;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+    });
+  });
+
+  // ANIMATED COUNTERS
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const duration = 2000;
+    const start = performance.now();
+
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      el.textContent = (target % 1 === 0 ? Math.floor(current) : current.toFixed(1)) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(e.target);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
+
+  // MATRIX RAIN
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>{}[]'.split('');
+  const fontSize = 14;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(8, 12, 16, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00e5ff';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 50);
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  // SCROLL ANIMATIONS
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // WHATSAPP FORM SUBMIT
+  function sendWhatsApp() {
+    const name = document.querySelector('input[placeholder="Dein Name"]').value;
+    const phone = document.querySelector('input[placeholder="+49 ..."]').value;
+    const service = document.querySelector('select').value;
+    const msg = document.querySelector('textarea').value;
+
+    const text = `Hallo IT Pro! 👋\n\nName: ${name || '–'}\nTelefon: ${phone || '–'}\nLeistung: ${service || '–'}\nNachricht: ${msg || '–'}`;
+    window.open(`https://wa.me/4901795224074?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  // ACCORDION
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+
+  // BLINK ANIMATION
+  const style = document.createElement('style');
+  style.textContent = `@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }`;
+  document.head.appendChild(style);
 </script>
+
 </body>
 </html>
